@@ -8,8 +8,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Set up the title of the web app
 st.title("Heart Failure Prediction Dashboard")
@@ -61,7 +59,7 @@ try:
     elif model_choice == "Random Forest":
         model = RandomForestClassifier(n_estimators=50, max_depth=3)
     elif model_choice == "SVM":
-        model = SVC(probability=True)
+        model = SVC(probability=True)  # Enable probability calculation
     elif model_choice == "XGBoost":
         model = XGBClassifier(max_depth=3)
         
@@ -78,6 +76,7 @@ try:
     st.subheader("Patient Risk Predictor")
     st.write("Adjust the values below to evaluate a patient's health metrics:")
     
+    # Creating individual inputs for the clinical features
     col1, col2 = st.columns(2)
     
     with col1:
@@ -96,53 +95,25 @@ try:
         smoking = st.selectbox("Smoking Status", [0, 1], format_func=lambda x: "Non-smoker" if x==0 else "Smoker")
         time = st.slider("Follow-up Period (Days)", int(df['time'].min()), int(df['time'].max()), 100)
 
-    # Put all user variables into a DataFrame
+    # Put all user variables into a DataFrame structured exactly like the original training data
     user_data = pd.DataFrame([[
         age, anaemia, creatinine_phosphokinase, diabetes, ejection_fraction,
         high_blood_pressure, platelets, serum_creatinine, serum_sodium, sex, smoking, time
     ]], columns=feature_names)
     
+    # Scale the patient's individual input using the fitted training scaler
     user_data_scaled = scaler.transform(user_data)
     
     # Predict using the active model
     prediction = model.predict(user_data_scaled)[0]
     prediction_proba = model.predict_proba(user_data_scaled)[0][1]
     
+    # Show prediction output neatly
     st.markdown("### Prediction Result")
     if prediction == 1:
         st.error(f"⚠️ High Risk of Heart Failure Event! (Probability: {prediction_proba * 100:.1f}%)")
     else:
         st.success(f"✅ Low Risk of Heart Failure Event. (Probability: {prediction_proba * 100:.1f}%)")
-        
-    # 5. Dynamic Feature Importance Chart
-    st.markdown("---")
-    st.subheader("Feature Importance Analysis")
-    st.write("See which health factors play the biggest role in this model's logic:")
-    
-    importance_values = None
-    
-    # Extract importances based on model type
-    if model_choice == "Logistic Regression":
-        importance_values = np.abs(model.coef_[0])
-    elif model_choice in ["Decision Tree", "Random Forest", "XGBoost"]:
-        importance_values = model.feature_importances_
-    elif model_choice == "SVM":
-        st.info("Feature importance is not directly available for the non-linear SVM model configuration, but you can switch to tree-based models or Logistic Regression to view specific feature weight impacts!")
-
-    if importance_values is not None:
-        # Pair feature names with their computed importance weights
-        feat_imp_df = pd.DataFrame({
-            'Clinical Feature': feature_names,
-            'Importance Score': importance_values
-        }).sort_values(by='Importance Score', ascending=False)
-        
-        # Plotting the data
-        fig, ax = plt.subplots(figsize=(10, 5))
-        sns.barplot(x='Importance Score', y='Clinical Feature', data=feat_imp_df, palette='viridis', ax=ax)
-        ax.set_title(f"How {model_choice} Ranks Feature Importance")
-        ax.set_xlabel("Relative Importance Weight")
-        ax.set_ylabel("Clinical Indicator")
-        st.pyplot(fig)
         
 except Exception as e:
     st.error(f"Error executing dashboard pipeline: {e}")
