@@ -14,7 +14,7 @@ import seaborn as sns
 # Set full-screen wide layout
 st.set_page_config(page_title="Heart Failure Prediction System", layout="wide")
 
-# --- GLOBAL HIGH-READABILITY INTERFACE CSS & GLOBAL FONT SCALING ---
+# --- GLOBAL HIGH-READABILITY INTERFACE CSS & STYLING CORE ---
 st.markdown("""
     <style>
     /* Prevent top padding cutoff */
@@ -30,7 +30,7 @@ st.markdown("""
         color: #1a3a4b !important;
     }
     
-    /* INCREASE INPUT BOX TEXT AND DROPDOWN ITEM SELECTION FONT SIZE ONLY */
+    /* INCREASE INPUT BOX TEXT AND DROPDOWN ITEM SELECTION FONT SIZE */
     .stTextInput input, .stSelectbox div[data-testid="stSelectbox-Trigger"] {
         font-size: 22px !important;
         font-weight: 600 !important;
@@ -38,25 +38,37 @@ st.markdown("""
         height: 55px !important;
     }
     
-    /* TARGET STREAMLIT'S IN-FORM INTERACTION LABELS */
-    div[data-baseweb="select"] {
+    /* TARGET DROPDOWN VALUE RENDER TEXT TO BE BIGGER */
+    div[data-baseweb="select"] * {
         font-size: 22px !important;
         font-weight: 600 !important;
     }
     
-    /* MAGNIFY NATIVE DATA TABLES SECTIONS WITH HIGHLIGHTED HEADERS */
+    /* FORCE SLIDER VALUE FLOATING NUMBERS TO BE LARGE AND VISIBLE */
+    div[data-testid="stThumbValue"] {
+        font-size: 24px !important;
+        font-weight: 800 !important;
+        color: #0c5460 !important;
+    }
+    div[data-testid="stSliderTickBar"] * {
+        font-size: 16px !important;
+    }
+    
+    /* MAGNIFY BOTH SIDES OF NATIVE DATA TABLES WITH HIGHLIGHTED HEADERS */
     .stTable table th {
         background-color: #0c5460 !important;
         color: white !important;
-        font-size: 22px !important;
+        font-size: 24px !important;
         font-weight: 800 !important;
     }
     .stTable td {
-        padding: 12px 15px !important;
-        font-size: 20px !important;
+        padding: 14px 18px !important;
+        font-size: 22px !important;
+        font-weight: 600 !important;
+        color: #1a3a4b !important;
     }
     
-    /* ENHANCED CLEAN BUTTONS WITH SIMPLIFIED TEXT */
+    /* ENHANCED CLEAN CENTERED BUTTONS WITH SIMPLIFIED TEXT */
     div.stButton > button, 
     div.stDownloadButton > button {
         background-color: #0c5460 !important;
@@ -67,10 +79,10 @@ st.markdown("""
         font-size: 24px !important;
         font-weight: 800 !important;
         width: 100% !important;
-        max-width: 600px !important;
+        max-width: 500px !important;
         min-height: 70px !important;
         display: block !important;
-        margin: 40px auto !important;
+        margin: 40px auto !important; /* Centering Alignment Rule */
         box-shadow: 0 8px 16px rgba(0,0,0,0.22) !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
@@ -101,13 +113,12 @@ st.markdown("""
         color: #2b2b2b !important;
     }
     
-    /* HIGH CONTRAST CLASSY CLINICAL REPORT SEVERITY CARD */
+    /* DYNAMIC SEVERITY CARDS CONFIGURATION BASE */
     .severity-card-premium {
         padding: 35px !important;
         border-radius: 12px !important;
         margin-bottom: 35px !important;
         background-color: #102A43 !important; /* Deep Premium Navy background */
-        border-left: 12px solid #E12D39 !important; /* Crimson critical indicator bar */
         box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
     }
     .severity-card-premium h2 {
@@ -222,19 +233,21 @@ if st.session_state.current_nav == "HOME":
         </ul>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
-            st.session_state.current_nav = "FORM"
-            st.rerun()
-            
+        
     with col_graphic:
         st.markdown("""
-            <div style="background-color: transparent; text-align:center; padding-top:120px; padding-bottom:60px;">
+            <div style="background-color: transparent; text-align:center; padding-top:60px; padding-bottom:30px;">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:100%;">
                     <path d="M 10 75 L 50 75 L 65 35 L 80 115 L 95 5 L 110 95 L 125 75 L 175 75 L 190 35 L 205 115 L 220 5 L 235 95 L 250 75 L 300 75 L 315 35 L 330 115 L 345 5 L 360 95 L 375 75 L 425 75 L 440 35 L 455 115 L 470 5 L 485 95 L 500 75 L 540 75 L 555 35 L 570 115 L 590 75"/>
                 </svg>
                 <p style="color:#1a3a4b; font-size:24px; font-weight:800; margin-top:35px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output Pipeline</p>
             </div>
         """, unsafe_allow_html=True)
+    
+    # Center aligned actions
+    if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
+        st.session_state.current_nav = "FORM"
+        st.rerun()
 
 # ---------------------------------------------------------
 # MODULE 2: FORM SCREEN
@@ -266,6 +279,7 @@ elif st.session_state.current_nav == "FORM":
         smoking = st.selectbox("Tobacco/Smoking Profile Behavioral Metrics", [0, 1], format_func=lambda x: "Non-smoker Habit Baseline" if x==0 else "Active Smoker Classification")
         time = st.slider("Follow-up Observation Window Chrono Duration (Days)", int(df['time'].min()), int(df['time'].max()), 120)
         
+    # Center aligned entry validation button
     if st.button("Submit Details", key="intake_process_btn"):
         st.session_state.patient_data = {
             "patient_name": patient_name, "patient_id": patient_id, "age": age, "anaemia": anaemia, 
@@ -277,7 +291,7 @@ elif st.session_state.current_nav == "FORM":
         st.rerun()
 
 # ---------------------------------------------------------
-# MODULE 3: MODELS VIEW (RETAINED PREMIUM STYLING + AUTO NAV)
+# MODULE 3: MODELS VIEW (MULTI-COLOR PALETTE)
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "MODELS":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>⚙️ Machine Learning Prediction Engine Module</h2>", unsafe_allow_html=True)
@@ -289,7 +303,7 @@ elif st.session_state.current_nav == "MODELS":
         </div>
     """, unsafe_allow_html=True)
     
-    model_choice = st.selectbox("Select Active Machine Learning Analytics Engine", ["Random Forest Classifier", "Logistic Regression Framework", "XGBoost Core Engine", "Decision Tree Model"])
+    model_choice = st.selectbox("Select Active Machine Learning Analytics Engine", ["Random Forest Classifier", "Logistic Regression Framework", "XGBoost Core Engine", "Decision Tree Model", "Support Vector Machine (SVM)"])
     
     if "Random Forest" in model_choice:
         model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
@@ -297,8 +311,10 @@ elif st.session_state.current_nav == "MODELS":
         model = LogisticRegression(max_iter=1000)
     elif "XGBoost" in model_choice:
         model = XGBClassifier(max_depth=4)
-    else:
+    elif "Decision Tree" in model_choice:
         model = DecisionTreeClassifier(max_depth=5)
+    else:
+        model = SVC(probability=True, random_state=42)
         
     model.fit(X_train_scaled, y_train)
     accuracy = model.score(X_test_scaled, y_test)
@@ -310,13 +326,17 @@ elif st.session_state.current_nav == "MODELS":
         </div>
     """, unsafe_allow_html=True)
     
-    # RESTORED PREMIUM GRADIENT GRAPH PALETTE
+    # ENGAGED PREMIUM MULTI-COLOR GRADIENT VISUALIZATION PIPELINE
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
     feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
     
-    fig, ax = plt.subplots(figsize=(12, 5.0))
-    sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='Blues_r', hue='Feature Vector', legend=False, ax=ax)
+    fig, ax = plt.subplots(figsize=(12, 5.5))
+    # Using 'viridis' palette ensures distinct multi-color tracking across weights
+    sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', hue='Feature Vector', legend=False, ax=ax)
     ax.tick_params(labelsize=14)
+    ax.set_ylabel("Feature Vector", fontsize=15, fontweight='bold')
+    ax.set_xlabel("Weight Importance", fontsize=15, fontweight='bold')
+    plt.tight_layout()
     st.pyplot(fig)
     
     st.session_state.model_choice = model_choice
@@ -325,7 +345,7 @@ elif st.session_state.current_nav == "MODELS":
     st.session_state.scaler = scaler
     st.session_state.feature_names = feature_names
 
-    # ACTION & DYNAMIC NAVIGATION REDIRECT AUTOMATION
+    # Centered processing execution button
     if st.button("Run Analysis", key="run_prediction_btn"):
         if st.session_state.patient_data is None:
             st.warning("⚠️ Access interrupted. Please input metrics in the Patient Intake Form first.")
@@ -334,7 +354,7 @@ elif st.session_state.current_nav == "MODELS":
             st.rerun()
 
 # ---------------------------------------------------------
-# MODULE 4: PREMIUM DIAGNOSTIC REPORT (HIGH CONTRAST RESTORED)
+# MODULE 4: PREMIUM DIAGNOSTIC REPORT (DYNAMIC SEVERITY SHIFT)
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "REPORT":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>📊 Reports Generation & Dossier Export Module</h2>", unsafe_allow_html=True)
@@ -351,20 +371,23 @@ elif st.session_state.current_nav == "REPORT":
             
         prob_percent = prediction_proba * 100
         
+        # DYNAMIC ACCENT INDICATOR COLOR STRATIFICATION CONFIGURATION
         if prob_percent < 35.0:
             severity_status = "LOW SYSTEMIC SEVERITY"
             severity_desc = "Clinical metrics are inside standard baseline windows. Structural heart performance scores are regularized."
+            indicator_color = "#28a745" # Pure Green for low metrics
         elif 35.0 <= prob_percent < 65.0:
             severity_status = "ELEVATED SEVERITY TIER (BORDERLINE WARNING)"
             severity_desc = "Noticeable data divergence across target biomarkers. Continued monitoring and clinical surveillance recommended."
+            indicator_color = "#fd7e14" # Vibrant Orange for borderline metrics
         else:
             severity_status = "CRITICAL HIGH-RISK SEVERITY PATHWAY"
             severity_desc = "Significant clinical deviations observed across multiple vector points. Urgent physiological intervention indicated."
+            indicator_color = "#dc3545" # Vivid Crimson Red for critical metrics
 
-        # VISIBILITY RECTIFIED: GUARANTEED CRISP PURE WHITE CONTRAST LABELS OVER THE DARK NAVY BACKGROUND
         st.markdown(f"""
-            <div class="severity-card-premium">
-                <h2>📝 Assessment: {severity_status}</h2>
+            <div class="severity-card-premium" style="border-left: 14px solid {indicator_color} !important;">
+                <h2>📝 Assessment: <span style="color: {indicator_color} !important;">{severity_status}</span></h2>
                 <p>Patient Risk Vector Probability Evaluation: <span style="color:#FFDF00; font-size:28px; font-weight:800;">{prob_percent:.1f}%</span></p>
                 <p style="color: #E2E8F0 !important; font-size: 22px; font-style: italic; margin-top: 10px;">
                     <b>Diagnostic Assessment Guideline:</b> {severity_desc}
@@ -378,11 +401,12 @@ elif st.session_state.current_nav == "REPORT":
         }
         st.table(pd.DataFrame(metrics_display))
 
-        if st.button("Download", key="download_report_btn"):
+        # Centered file output action
+        if st.button("Download Report", key="download_report_btn"):
             st.success("Dossier compiled successfully. File system pipeline active.")
 
 # ---------------------------------------------------------
-# MODULE 5: COMPREHENSIVE HELP / ABOUT VIEW (EXAMINER-FRIENDLY)
+# MODULE 5: COMPREHENSIVE HELP / ABOUT VIEW 
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "ABOUT":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>ℹ️ Help / About Module - Diagnostic Specifications</h2>", unsafe_allow_html=True)
@@ -396,7 +420,6 @@ elif st.session_state.current_nav == "ABOUT":
     </div>
     """, unsafe_allow_html=True)
     
-    # Text updated to be easily readable and digestible for project presentation examiners
     specs_df = pd.DataFrame({
         "System Pipeline Layer": ["1. Intake Data Regularization", "2. Vector Processing Transformer", "3. Analytics Classifiers Sandbox", "4. Report Compiler Factory"],
         "Operational Scope & Functional Target Goals": [
