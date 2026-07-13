@@ -60,8 +60,8 @@ st.markdown("""
         padding: 0 10px !important;
     }
     
-    /* 4. EXECUTIVE CENTERING CORE RULES FOR FORM INTERFACE BUTTONS */
-    div[data-testid="stForm"] button[type="submit"], div.stButton > button, div.stDownloadButton > button {
+    /* 4. EXECUTIVE ALIGNMENT CORE RULES FOR FORM INTERFACE BUTTONS */
+    div[data-testid="stForm"] button[type="submit"] {
         background-color: #0c5460 !important;
         color: white !important;
         border-radius: 8px !important;
@@ -72,6 +72,20 @@ st.markdown("""
         min-width: 200px !important;
         display: block !important;
         margin: 25px auto 0 auto !important;
+        box-shadow: 0 4px 12px rgba(12, 84, 96, 0.15) !important;
+        border: none !important;
+        text-transform: uppercase !important;
+    }
+    
+    /* Standard functional design for content action buttons */
+    div.stButton > button, div.stDownloadButton > button {
+        background-color: #0c5460 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 12px 32px !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        width: auto !important;
         box-shadow: 0 4px 12px rgba(12, 84, 96, 0.15) !important;
         border: none !important;
         text-transform: uppercase !important;
@@ -98,9 +112,9 @@ st.markdown("""
     }
     
     /* TYPOGRAPHY CORES */
-    .hero-title { font-size: 44px !important; font-weight: 800; color: #1a3a4b; margin-bottom: 10px; }
-    .hero-subtitle { font-size: 28px !important; font-weight: 600; color: #0c5460; margin-bottom: 25px; }
-    .hero-body { font-size: 24px !important; line-height: 1.7 !important; color: #333333; }
+    .hero-title { font-size: 42px !important; font-weight: 800; color: #1a3a4b; margin-bottom: 5px; text-align: left; }
+    .hero-subtitle { font-size: 26px !important; font-weight: 600; color: #0c5460; margin-bottom: 20px; text-align: left; }
+    .hero-body { font-size: 22px !important; line-height: 1.6 !important; color: #333333; text-align: left; }
     
     /* CLINICAL OUTCOME TIERS */
     .assessment-box-safe { background-color: #28a745 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
@@ -124,7 +138,6 @@ if "patient_data" not in st.session_state:
 if not st.session_state.logged_in:
     st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
     
-    # Render fields strictly within a clean, centered interface card column format
     col_l1, col_l2, col_l3 = st.columns([1.5, 2, 1.5])
     with col_l2:
         with st.form("login_form", clear_on_submit=False):
@@ -169,39 +182,49 @@ with col_n4:
 with col_n5:
     if st.button("ℹ️ SYSTEM HELP", key="nav_about", use_container_width=True): st.session_state.current_nav = "ABOUT"; st.rerun()
 
-# --- MODULE 1: HOME VIEW ---
+# --- MODULE 1: HOME VIEW (RE-DESIGNED AS PER ATTACHED IMAGES) ---
 if st.session_state.current_nav == "HOME":
-    st.markdown('<div class="hero-title" style="text-align: center; margin-top: 15px;">Heart Failure Prediction System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-subtitle" style="text-align: center;">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
     
-    # Original centered telemetry heartbeat asset alignment mapping
-    st.markdown("""
-        <div style="text-align:center; padding: 20px 0;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 45%; max-width: 450px; margin: 0 auto;">
-                <path d="M 10 50 L 150 50 L 170 20 L 190 80 L 210 5 L 230 95 L 250 50 L 350 50 L 370 20 L 390 80 L 410 5 L 430 95 L 450 50 L 590 50 Z"/>
-            </svg>
-        </div>
-    """, unsafe_allow_html=True)
+    # Implementing the 2-column horizontal split requested by your image layout
+    col_home_left, col_home_right = st.columns([1.4, 1.1])
     
-    st.markdown("""
-    <div class="hero-body" style="text-align: center; max-width: 950px; margin: 0 auto; padding-bottom: 20px;">
-    This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
-    By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
-    <br><br>
-    <div style="text-align: left; display: inline-block; background-color: #f8f9fa; padding: 30px; border-radius: 8px; border-left: 5px solid #0c5460; width: 100%;">
-        <b style="font-size: 26px; color: #1a3a4b;">Key System Design Pillars:</b>
-        <ul style="margin-top: 10px;">
+    with col_home_left:
+        st.markdown('<div class="hero-title">CardioShield Predictive Clinical Portal</div>', unsafe_allow_html=True)
+        st.markdown('<div class="hero-subtitle">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="hero-body">
+        This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
+        By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
+        <br><br>
+        <b style="font-size: 24px; color: #1a3a4b;">Key System Design Pillars:</b>
+        <ul style="margin-top: 10px; padding-left: 20px; font-size: 22px;">
             <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
             <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
             <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
         </ul>
-    </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
-        st.session_state.current_nav = "FORM"
-        st.rerun()
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Action button positioned underneath content left side
+        if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
+            st.session_state.current_nav = "FORM"
+            st.rerun()
+            
+    with col_home_right:
+        st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+        # Perfectly aligned vector telemetry heartbeat graphic component on the right side
+        st.markdown("""
+            <div style="text-align: center; padding: 20px 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 100%; max-width: 500px; margin: 0 auto;">
+                    <path d="M 10 50 L 150 50 L 170 20 L 190 80 L 210 5 L 230 95 L 250 50 L 350 50 L 370 20 L 390 80 L 410 5 L 430 95 L 450 50 L 590 50 Z"/>
+                </svg>
+                <p style="font-size: 18px; font-weight: 700; color: #1a3a4b; margin-top: 15px; letter-spacing: 0.5px;">
+                    Cardiovascular Diagnostics Engine Output Pipeline
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
 
 # --- MODULE 2: FORM SCREEN ---
 elif st.session_state.current_nav == "FORM":
