@@ -82,6 +82,7 @@ try:
     X_train_scaled, X_test_scaled, y_train, y_test, feature_names, df = process_ml_data()
 except Exception as internal_err:
     st.error(f"💥 Core Data Initialization Failed: {internal_err}")
+    st.info("Ensure all requirements (scikit-learn, xgboost, etc.) are declared in requirements.txt")
     st.stop()
 
 
@@ -189,7 +190,7 @@ elif st.session_state.current_nav == "INTAKE":
         st.rerun()
 
 # ---------------------------------------------------------
-# MODULE 4: PREDICTION MODULE (Completely Error Insulated)
+# MODULE 4: PREDICTION MODULE (Protected Algorithm Allocation)
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "EVALUATION":
     st.subheader("Machine Learning Prediction Engine Module")
@@ -199,23 +200,43 @@ elif st.session_state.current_nav == "EVALUATION":
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.svm import SVC
-    from xgboost import XGBClassifier
+    
+    # Safe import for XGBoost to avoid deployment disruptions
+    try:
+        from xgboost import XGBClassifier
+        xgb_available = True
+    except ImportError:
+        xgb_available = False
+    
     import matplotlib.pyplot as plt
     import seaborn as sns
 
-    if model_choice == "Logistic Regression": model = LogisticRegression()
-    elif model_choice == "Decision Tree": model = DecisionTreeClassifier(max_depth=3)
-    elif model_choice == "Random Forest": model = RandomForestClassifier(n_estimators=50, max_depth=3)
-    elif model_choice == "SVM": model = SVC(probability=True)
-    elif model_choice == "XGBoost": model = XGBClassifier(max_depth=3)
+    if model_choice == "Logistic Regression": 
+        model = LogisticRegression()
+    elif model_choice == "Decision Tree": 
+        model = DecisionTreeClassifier(max_depth=3)
+    elif model_choice == "Random Forest": 
+        model = RandomForestClassifier(n_estimators=50, max_depth=3)
+    elif model_choice == "SVM": 
+        model = SVC(probability=True)
+    elif model_choice == "XGBoost": 
+        if xgb_available:
+            model = XGBClassifier(max_depth=3)
+        else:
+            st.error("XGBoost package is compiling inside the cloud environment. Please select another model or refresh in a minute.")
+            st.stop()
         
     model.fit(X_train_scaled, y_train)
     accuracy = model.score(X_test_scaled, y_test)
     st.metric(label=f"{model_choice} Baseline Test Accuracy", value=f"{accuracy * 100:.2f}%")
     
     importance_values = None
-    if model_choice == "Logistic Regression": importance_values = np.abs(model.coef_[0])
-    elif model_choice in ["Decision Tree", "Random Forest", "XGBoost"]: importance_values = model.feature_importances_
+    if model_choice == "Logistic Regression": 
+        importance_values = np.abs(model.coef_[0])
+    elif model_choice in ["Decision Tree", "Random Forest"]: 
+        importance_values = model.feature_importances_
+    elif model_choice == "XGBoost" and xgb_available:
+        importance_values = model.feature_importances_
         
     if importance_values is not None:
         try:
@@ -269,4 +290,4 @@ elif st.session_state.current_nav == "REPORT":
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "ABOUT":
     st.subheader("Help / About Module - Diagnostic Specifications")
-    st.markdown("<div class='hero-body'>This software solution acts as an architectural verification pipeline matching presentation specifications. Includes clean data routing checkpoints, feature mapping modules, and diagnostic reporting matrix engines.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='hero-body'>This software solution acts as an architectural verification pipeline matching presentation specifications.</div>", unsafe_allow_html=True)
