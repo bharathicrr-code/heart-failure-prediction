@@ -13,65 +13,76 @@ import seaborn as sns
 
 st.set_page_config(page_title="CardioShield CDSS", layout="wide")
 
-# --- CUSTOM CSS FOR UNIFIED CUSTOM COMPONENT COLORING & SHORT BUTTONS ---
+# --- CUSTOM CSS FOR HIGH-VISIBILITY TYPOGRAPHY & BUTTONS ---
 st.markdown("""
     <style>
+    /* Top Logo Typography */
     .nav-logo {
-        font-size: 26px;
-        font-weight: bold;
-        color: #0c5460;
+        font-size: 34px !important;
+        font-weight: 800 !important;
+        color: #0c5460 !important;
     }
+    
     /* Enlarge and improve readability of titles on Home Page */
     .hero-title {
-        font-size: 42px;
-        font-weight: 800;
-        color: #1a3a4b;
-        margin-bottom: 5px;
+        font-size: 46px !important;
+        font-weight: 800 !important;
+        color: #1a3a4b !important;
+        margin-bottom: 10px !important;
+        line-height: 1.2 !important;
     }
     .hero-subtitle {
-        font-size: 24px;
-        font-weight: 600;
-        color: #0c5460;
-        margin-bottom: 20px;
+        font-size: 28px !important;
+        font-weight: 700 !important;
+        color: #0c5460 !important;
+        margin-bottom: 25px !important;
     }
     .hero-body {
-        font-size: 18px;
-        line-height: 1.6;
-        color: #333333;
+        font-size: 22px !important;
+        line-height: 1.7 !important;
+        color: #2b2b2b !important;
     }
-    /* Target regular Streamlit buttons to ensure they look uniform, short, and official teal blue */
-    div.stButton > button {
+    .hero-body ul li {
+        font-size: 21px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Make Navigation Bar Header Buttons Highly Visible */
+    div[data-testid="stHorizontalBlock"] div.stButton > button {
+        background-color: #ffffff !important;
+        color: #0c5460 !important;
+        border: 3px solid #0c5460 !important;
+        border-radius: 8px !important;
+        padding: 12px 20px !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+        width: 100% !important;
+        min-height: 55px !important;
+    }
+    div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
         background-color: #0c5460 !important;
         color: white !important;
-        border-radius: 6px !important;
-        border: none !important;
-        padding: 8px 24px !important;
-        font-size: 16px !important;
-        font-weight: bold !important;
-        width: auto !important; /* Forces buttons to stay short */
-        display: block;
-        margin: 0 auto; /* Centers the button rows nicely */
     }
-    div.stButton > button:hover {
-        background-color: #0a434d !important;
-        color: white !important;
-    }
-    /* Format file downloader button to look identical to standard buttons */
-    div.stDownloadButton > button {
+
+    /* Target Action Buttons at the Bottom of Pages (Non-navigation) */
+    .action-container div.stButton > button, 
+    .action-container div.stDownloadButton > button {
         background-color: #0c5460 !important;
         color: white !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         border: none !important;
-        padding: 8px 24px !important;
-        font-size: 16px !important;
+        padding: 16px 45px !important;
+        font-size: 22px !important;
         font-weight: bold !important;
-        width: auto !important;
-        display: block;
-        margin: 0 auto;
+        width: 320px !important; /* Fixed compact professional size */
+        min-height: 60px !important;
+        display: block !important;
+        margin: 0 auto !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }
-    div.stDownloadButton > button:hover {
+    .action-container div.stButton > button:hover,
+    .action-container div.stDownloadButton > button:hover {
         background-color: #0a434d !important;
-        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -100,9 +111,9 @@ try:
     X_test_scaled = scaler.transform(X_test)
 
     # ---------------------------------------------------------
-    # TOP WEB MENU NAVIGATION BAR
+    # TOP WEB MENU NAVIGATION BAR (Tightened horizontal spacing)
     # ---------------------------------------------------------
-    col_logo, col_menu = st.columns([1, 2])
+    col_logo, col_space, col_menu = st.columns([4, 1, 6])
     
     with col_logo:
         st.markdown('<div class="nav-logo">🩺 CardioShield</div>', unsafe_allow_html=True)
@@ -112,20 +123,20 @@ try:
         if nav_cols[0].button("HOME", key="btn_nav_home"):
             st.session_state.current_nav = "HOME"
             st.rerun()
-        if nav_cols[1].button("PATIENT INTAKE", key="btn_nav_intake"):
+        if nav_cols[1].button("INTAKE", key="btn_nav_intake"):
             st.session_state.current_nav = "INTAKE"
             st.rerun()
-        if nav_cols[2].button("MODEL EVALUATION", key="btn_nav_eval"):
+        if nav_cols[2].button("MODELS", key="btn_nav_eval"):
             st.session_state.current_nav = "EVALUATION"
             st.rerun()
-        if nav_cols[3].button("CLINICAL REPORT", key="btn_nav_rep"):
+        if nav_cols[3].button("REPORT", key="btn_nav_rep"):
             st.session_state.current_nav = "REPORT"
             st.rerun()
 
     st.markdown("---")
 
     # ---------------------------------------------------------
-    # PAGE MODULE 1: IMPROVED HOME PAGE VIEW WITH IMAGE
+    # PAGE MODULE 1: IMPROVED HOME PAGE VIEW WITH RELEVANT HEART IMAGE
     # ---------------------------------------------------------
     if st.session_state.current_nav == "HOME":
         col_info, col_graphic = st.columns([4, 3])
@@ -136,7 +147,7 @@ try:
             
             st.markdown("""
             <div class="hero-body">
-            CardioShield leverages machine learning pipelines to assist healthcare professionals with objective risk stratification. 
+            CardioShield leverages advanced machine learning pipelines to assist healthcare professionals with objective risk stratification. 
             By processing key clinical indicators synchronously, the engine outputs predictive insights to catch signs of advanced heart failure early.
             <br><br>
             <b>Key Architecture Pillars:</b>
@@ -148,17 +159,19 @@ try:
             </div>
             """, unsafe_allow_html=True)
             
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Start New Patient Evaluation ➡️", key="home_start_btn"):
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.markdown('<div class="action-container">', unsafe_allow_html=True)
+            if st.button("Start Evaluation ➡️", key="home_start_btn"):
                 st.session_state.current_nav = "INTAKE"
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
                 
         with col_graphic:
-            # Displays an elegant clinical graphic vector asset directly alongside the text block
-            st.image("https://img.freepik.com/free-vector/human-internal-organ-with-heart_1308-103328.jpg", caption="Cardiovascular Metrics Mapping Interface", use_container_width=True)
+            # Replaced with an accurate, highly relevant cardiology diagnostic illustration vector
+            st.image("https://img.freepik.com/free-vector/cardiogram-concept-illustration_114360-17070.jpg", caption="Cardiovascular Pulse & Rhythm Diagnostics Monitor", use_container_width=True)
 
     # ---------------------------------------------------------
-    # PAGE MODULE 2: INTAKE FORM VIEW (SHORT BUTTON, NO RED BAR)
+    # PAGE MODULE 2: INTAKE FORM VIEW
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "INTAKE":
         st.subheader("Patient Administrative & Clinical Metrics Entry")
@@ -181,7 +194,7 @@ try:
             
         with col2:
             platelets = st.slider("Platelets Count", float(df['platelets'].min()), float(df['platelets'].max()), 250000.0, step=1000.0)
-            serum_creatinine = st.slider("Serum Creatinine (mg/dL)", float(df['serum_creatinine'].min()), float(df['serum_creatinine'].max()), 2.5, step=0.1)
+            rose_creatinine = st.slider("Serum Creatinine (mg/dL)", float(df['serum_creatinine'].min()), float(df['serum_creatinine'].max()), 2.5, step=0.1)
             serum_sodium = st.slider("Serum Sodium (mEq/L)", int(df['serum_sodium'].min()), int(df['serum_sodium'].max()), 135)
             sex = st.selectbox("Biological Sex", [0, 1], format_func=lambda x: "Female" if x==0 else "Male")
             smoking = st.selectbox("Smoking Profile", [0, 1], format_func=lambda x: "Non-smoker" if x==0 else "Active Smoker")
@@ -189,28 +202,27 @@ try:
             
         st.markdown("---")
         
-        # Centered, short button without full width or red warning blocks
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-        if st.button("Analyze Patient Vitals ➡️", key="intake_process_btn"):
+        # Highly visible, short action button container
+        st.markdown('<div class="action-container">', unsafe_allow_html=True)
+        if st.button("Analyze Vitals ➡️", key="intake_process_btn"):
             st.session_state.patient_data = {
                 "patient_name": patient_name, "patient_id": patient_id,
                 "age": age, "anaemia": anaemia, "creatinine_phosphokinase": creatinine_phosphokinase,
                 "diabetes": diabetes, "ejection_fraction": ejection_fraction, "high_blood_pressure": high_blood_pressure,
-                "platelets": platelets, "serum_creatinine": serum_creatinine, "serum_sodium": serum_sodium,
+                "platelets": platelets, "serum_creatinine": rose_creatinine, "serum_sodium": serum_sodium,
                 "sex": sex, "smoking": smoking, "time": time
             }
             st.session_state.current_nav = "EVALUATION"
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # ---------------------------------------------------------
-    # PAGE MODULE 3: MODEL EVALUATION DESK (PROJECT DEMO CONTEXT)
+    # PAGE MODULE 3: MODEL EVALUATION DESK
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "EVALUATION":
         st.subheader("Model Validation & Core Metrics Desk")
         
-        # Informative note explicitly framing this page for presentation/evaluation execution
-        st.info("⚙️ **Developer Diagnostic Sandbox:** Use this control selection panel to toggle different backend machine learning algorithms to showcase variant accuracy metrics and weights during evaluation benchmarking.")
+        st.info("⚙️ Developer Diagnostic Sandbox: Use this control selection panel to toggle different backend machine learning algorithms to showcase variant accuracy metrics and weights during evaluation benchmarking.")
         
         model_choice = st.selectbox("Select Active Analytics Backbone Engine", ["Random Forest", "Logistic Regression", "XGBoost", "Decision Tree", "SVM"])
         
@@ -250,12 +262,12 @@ try:
 
         st.markdown("---")
         
-        # Centered short button matching the layout style perfectly
-        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-        if st.button("Generate Official Report 📋", key="eval_report_btn"):
+        # Unified layout action button 
+        st.markdown('<div class="action-container">', unsafe_allow_html=True)
+        if st.button("Generate Report 📋", key="eval_report_btn"):
             st.session_state.current_nav = "REPORT"
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # PAGE MODULE 4: CLINICAL REPORT VIEW
@@ -307,8 +319,8 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
 """
             st.markdown("---")
             
-            # Short custom themed export button centered correctly
-            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+            # Formatted export download button matching standard actions perfectly
+            st.markdown('<div class="action-container">', unsafe_allow_html=True)
             st.download_button(
                 label=f"📥 Download Report (.TXT)", 
                 data=report_data, 
@@ -316,7 +328,7 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
                 mime="text/plain",
                 key="download_report_btn"
             )
-            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"System Initialization Interrupted: {e}")
