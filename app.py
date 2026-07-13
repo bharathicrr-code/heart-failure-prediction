@@ -308,7 +308,17 @@ try:
         if importance_values is not None:
             feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
             fig, ax = plt.subplots(figsize=(10, 3.5))
-            sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', ax=ax)
+            
+            # This completely fixes the modern Seaborn compatibility crash
+            sns.barplot(
+                x='Weight Importance', 
+                y='Feature Vector', 
+                data=feat_imp_df, 
+                palette='viridis', 
+                hue='Feature Vector', 
+                legend=False, 
+                ax=ax
+            )
             st.pyplot(fig)
             
         st.session_state.model_choice = model_choice
@@ -325,7 +335,6 @@ try:
             else:
                 st.session_state.prediction_made = True
                 st.success("Analysis calculation compiled successfully. Check the outputs generated inside the Reports module.")
-
     # ---------------------------------------------------------
     # MODULE 5: REPORTS MODULE 
     # ---------------------------------------------------------
