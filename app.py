@@ -23,38 +23,36 @@ st.markdown("""
         padding-bottom: 3rem !important;
     }
     
-    /* MAGNIFY LABELS AND STYLES */
+    /* 1. FORCE MAXIMUM FONT SIZE FOR ALL INPUT BOXES AND DROPDOWNS (INCLUDING LOGIN) */
+    .stTextInput input, .stSelectbox div, div[data-baseweb="select"] * {
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        color: #1a3a4b !important;
+    }
+    
+    /* Make the actual layout rows of dropdown choices and text inputs taller to match font */
+    .stTextInput > div > div > input {
+        min-height: 60px !important;
+    }
+    div[data-testid="stSelectbox-Trigger"] {
+        min-height: 60px !important;
+    }
+    
+    /* 2. MAGNIFY ALL INPUT LABELS AND SLIDER TITLES */
     .stSlider label p, .stSelectbox label p, .stTextInput label p {
         font-size: 24px !important;
         font-weight: 700 !important;
         color: #1a3a4b !important;
     }
     
-    /* INCREASE INPUT BOX TEXT AND DROPDOWN ITEM SELECTION FONT SIZE */
-    .stTextInput input, .stSelectbox div[data-testid="stSelectbox-Trigger"] {
-        font-size: 22px !important;
-        font-weight: 600 !important;
-        color: #1a3a4b !important;
-        height: 55px !important;
-    }
-    
-    /* TARGET DROPDOWN VALUE RENDER TEXT TO BE BIGGER */
-    div[data-baseweb="select"] * {
-        font-size: 22px !important;
-        font-weight: 600 !important;
-    }
-    
-    /* FORCE SLIDER VALUE FLOATING NUMBERS TO BE LARGE AND VISIBLE */
+    /* 3. FORCE SLIDER VALUE FLOATING NUMBERS TO BE LARGE AND VISIBLE */
     div[data-testid="stThumbValue"] {
-        font-size: 24px !important;
+        font-size: 26px !important;
         font-weight: 800 !important;
         color: #0c5460 !important;
     }
-    div[data-testid="stSliderTickBar"] * {
-        font-size: 16px !important;
-    }
     
-    /* MAGNIFY BOTH SIDES OF NATIVE DATA TABLES WITH HIGHLIGHTED HEADERS */
+    /* 4. MAGNIFY BOTH SIDES OF NATIVE DATA TABLES WITH HIGHLIGHTED HEADERS */
     .stTable table th {
         background-color: #0c5460 !important;
         color: white !important;
@@ -68,7 +66,7 @@ st.markdown("""
         color: #1a3a4b !important;
     }
     
-    /* ENHANCED CLEAN CENTERED BUTTONS WITH SIMPLIFIED TEXT */
+    /* 5. CLEAN CENTERED ACTION BUTTONS */
     div.stButton > button, 
     div.stDownloadButton > button {
         background-color: #0c5460 !important;
@@ -82,7 +80,7 @@ st.markdown("""
         max-width: 500px !important;
         min-height: 70px !important;
         display: block !important;
-        margin: 40px auto !important; /* Centering Alignment Rule */
+        margin: 40px auto !important; /* Center Alignment */
         box-shadow: 0 8px 16px rgba(0,0,0,0.22) !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
@@ -95,7 +93,7 @@ st.markdown("""
         box-shadow: 0 12px 20px rgba(0,0,0,0.28) !important;
     }
     
-    /* TYPOGRAPHY BLOCKS */
+    /* HERO TYPOGRAPHY BLOCKS */
     .hero-title {
         font-size: 46px !important;
         font-weight: 800 !important;
@@ -113,24 +111,18 @@ st.markdown("""
         color: #2b2b2b !important;
     }
     
-    /* DYNAMIC SEVERITY CARDS CONFIGURATION BASE */
-    .severity-card-premium {
-        padding: 35px !important;
-        border-radius: 12px !important;
-        margin-bottom: 35px !important;
-        background-color: #102A43 !important; /* Deep Premium Navy background */
-        box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
+    /* COMPLETE ASSESSMENT BOX DYNAMIC BACKGROUND */
+    .assessment-box-safe {
+        background-color: #28a745 !important; /* Green */
+        padding: 35px !important; border-radius: 12px !important; margin-bottom: 35px !important; color: white !important;
     }
-    .severity-card-premium h2 {
-        color: #FFFFFF !important;
-        font-size: 34px !important;
-        font-weight: 900 !important;
-        margin: 0 0 12px 0 !important;
+    .assessment-box-borderline {
+        background-color: #fd7e14 !important; /* Orange */
+        padding: 35px !important; border-radius: 12px !important; margin-bottom: 35px !important; color: white !important;
     }
-    .severity-card-premium p {
-        color: #FFFFFF !important;
-        font-size: 24px !important;
-        line-height: 1.6 !important;
+    .assessment-box-severe {
+        background-color: #dc3545 !important; /* Red */
+        padding: 35px !important; border-radius: 12px !important; margin-bottom: 35px !important; color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -140,7 +132,6 @@ st.markdown("""
 def load_data():
     return pd.read_csv("heart_failure_clinical_records_dataset.csv")
 
-# Initialize Session State Variables Safely
 if "current_nav" not in st.session_state:
     st.session_state.current_nav = "HOME"
 if "logged_in" not in st.session_state:
@@ -153,10 +144,12 @@ if not st.session_state.logged_in:
     st.markdown("<br><br>", unsafe_allow_html=True)
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
-        st.markdown("<h2 style='text-align: center; color: #1a3a4b;'>🔒 System Authentication Gateway</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; color: #1a3a4b; font-size:36px;'>🔒 System Authentication Gateway</h2>", unsafe_allow_html=True)
         with st.form("login_form"):
             username = st.text_input("Username / Clinician Identification Badge Key", value="admin")
             password = st.text_input("Secure Password Access Key", type="password", value="password")
+            
+            # Form-specific submit button handling centering
             submit_login = st.form_submit_button("Authenticate Access Verification")
             if submit_login:
                 if username == "admin" and password == "password":
@@ -224,13 +217,6 @@ if st.session_state.current_nav == "HOME":
         <div class="hero-body">
         This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
         By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
-        <br><br>
-        <b>Key System Design Pillars:</b>
-        <ul>
-            <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
-            <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
-            <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
-        </ul>
         </div>
         """, unsafe_allow_html=True)
         
@@ -238,13 +224,11 @@ if st.session_state.current_nav == "HOME":
         st.markdown("""
             <div style="background-color: transparent; text-align:center; padding-top:60px; padding-bottom:30px;">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:100%;">
-                    <path d="M 10 75 L 50 75 L 65 35 L 80 115 L 95 5 L 110 95 L 125 75 L 175 75 L 190 35 L 205 115 L 220 5 L 235 95 L 250 75 L 300 75 L 315 35 L 330 115 L 345 5 L 360 95 L 375 75 L 425 75 L 440 35 L 455 115 L 470 5 L 485 95 L 500 75 L 540 75 L 555 35 L 570 115 L 590 75"/>
+                    <path d="M 10 75 L 50 75 L 65 35 L 80 115 L 95 5 L 110 95 L 125 75 L 175 75 L 190 35 L 205 115 L 220 5 L 235 95 L 250 75 L 300 75"/>
                 </svg>
-                <p style="color:#1a3a4b; font-size:24px; font-weight:800; margin-top:35px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output Pipeline</p>
             </div>
         """, unsafe_allow_html=True)
     
-    # Center aligned actions
     if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
         st.session_state.current_nav = "FORM"
         st.rerun()
@@ -279,7 +263,6 @@ elif st.session_state.current_nav == "FORM":
         smoking = st.selectbox("Tobacco/Smoking Profile Behavioral Metrics", [0, 1], format_func=lambda x: "Non-smoker Habit Baseline" if x==0 else "Active Smoker Classification")
         time = st.slider("Follow-up Observation Window Chrono Duration (Days)", int(df['time'].min()), int(df['time'].max()), 120)
         
-    # Center aligned entry validation button
     if st.button("Submit Details", key="intake_process_btn"):
         st.session_state.patient_data = {
             "patient_name": patient_name, "patient_id": patient_id, "age": age, "anaemia": anaemia, 
@@ -291,7 +274,7 @@ elif st.session_state.current_nav == "FORM":
         st.rerun()
 
 # ---------------------------------------------------------
-# MODULE 3: MODELS VIEW (MULTI-COLOR PALETTE)
+# MODULE 3: MODELS VIEW (PRESERVED PAINT MODEL DESIGN)
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "MODELS":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>⚙️ Machine Learning Prediction Engine Module</h2>", unsafe_allow_html=True)
@@ -326,12 +309,11 @@ elif st.session_state.current_nav == "MODELS":
         </div>
     """, unsafe_allow_html=True)
     
-    # ENGAGED PREMIUM MULTI-COLOR GRADIENT VISUALIZATION PIPELINE
+    # MULTI-COLOR GRADIENT VISUALIZATION PIPELINE PRESERVED
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
     feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
     
     fig, ax = plt.subplots(figsize=(12, 5.5))
-    # Using 'viridis' palette ensures distinct multi-color tracking across weights
     sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', hue='Feature Vector', legend=False, ax=ax)
     ax.tick_params(labelsize=14)
     ax.set_ylabel("Feature Vector", fontsize=15, fontweight='bold')
@@ -345,7 +327,6 @@ elif st.session_state.current_nav == "MODELS":
     st.session_state.scaler = scaler
     st.session_state.feature_names = feature_names
 
-    # Centered processing execution button
     if st.button("Run Analysis", key="run_prediction_btn"):
         if st.session_state.patient_data is None:
             st.warning("⚠️ Access interrupted. Please input metrics in the Patient Intake Form first.")
@@ -354,7 +335,7 @@ elif st.session_state.current_nav == "MODELS":
             st.rerun()
 
 # ---------------------------------------------------------
-# MODULE 4: PREMIUM DIAGNOSTIC REPORT (DYNAMIC SEVERITY SHIFT)
+# MODULE 4: DIAGNOSTIC REPORT (EXACT CORRECTED BOX COLORS)
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "REPORT":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>📊 Reports Generation & Dossier Export Module</h2>", unsafe_allow_html=True)
@@ -368,28 +349,27 @@ elif st.session_state.current_nav == "REPORT":
         user_data_scaled = st.session_state.scaler.transform(user_data)
         prediction_proba = st.session_state.model.predict_proba(user_data_scaled)[0][1]
         active_engine_name = st.session_state.model_choice
-            
         prob_percent = prediction_proba * 100
         
-        # DYNAMIC ACCENT INDICATOR COLOR STRATIFICATION CONFIGURATION
+        # EXACT FULL BACKGROUND COLOR SHIFT MATCHING YOUR RULE SET
         if prob_percent < 35.0:
-            severity_status = "LOW SYSTEMIC SEVERITY"
+            box_class = "assessment-box-safe" # FULL GREEN BACKGROUND
+            severity_status = "SAFE PERFORMING METRIC WINDOWS"
             severity_desc = "Clinical metrics are inside standard baseline windows. Structural heart performance scores are regularized."
-            indicator_color = "#28a745" # Pure Green for low metrics
         elif 35.0 <= prob_percent < 65.0:
-            severity_status = "ELEVATED SEVERITY TIER (BORDERLINE WARNING)"
+            box_class = "assessment-box-borderline" # FULL ORANGE BACKGROUND
+            severity_status = "BORDERLINE WARNING TIER"
             severity_desc = "Noticeable data divergence across target biomarkers. Continued monitoring and clinical surveillance recommended."
-            indicator_color = "#fd7e14" # Vibrant Orange for borderline metrics
         else:
-            severity_status = "CRITICAL HIGH-RISK SEVERITY PATHWAY"
+            box_class = "assessment-box-severe" # FULL RED BACKGROUND
+            severity_status = "SEVERE CRITICAL HIGH-RISK PATHWAY"
             severity_desc = "Significant clinical deviations observed across multiple vector points. Urgent physiological intervention indicated."
-            indicator_color = "#dc3545" # Vivid Crimson Red for critical metrics
 
         st.markdown(f"""
-            <div class="severity-card-premium" style="border-left: 14px solid {indicator_color} !important;">
-                <h2>📝 Assessment: <span style="color: {indicator_color} !important;">{severity_status}</span></h2>
-                <p>Patient Risk Vector Probability Evaluation: <span style="color:#FFDF00; font-size:28px; font-weight:800;">{prob_percent:.1f}%</span></p>
-                <p style="color: #E2E8F0 !important; font-size: 22px; font-style: italic; margin-top: 10px;">
+            <div class="{box_class}">
+                <h2 style="color: white !important; margin:0 0 10px 0; font-weight:900; font-size:36px;">📝 Assessment: {severity_status}</h2>
+                <p style="color: white !important; font-size:26px; font-weight:700; margin:0;">Patient Risk Vector Probability Evaluation: {prob_percent:.1f}%</p>
+                <p style="color: white !important; font-size: 22px; font-style: italic; margin-top: 15px; opacity: 0.95;">
                     <b>Diagnostic Assessment Guideline:</b> {severity_desc}
                 </p>
             </div>
@@ -401,33 +381,17 @@ elif st.session_state.current_nav == "REPORT":
         }
         st.table(pd.DataFrame(metrics_display))
 
-        # Centered file output action
         if st.button("Download Report", key="download_report_btn"):
             st.success("Dossier compiled successfully. File system pipeline active.")
 
 # ---------------------------------------------------------
-# MODULE 5: COMPREHENSIVE HELP / ABOUT VIEW 
+# MODULE 5: SYSTEM ABOUT VIEW
 # ---------------------------------------------------------
 elif st.session_state.current_nav == "ABOUT":
     st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>ℹ️ Help / About Module - Diagnostic Specifications</h2>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="hero-body">
-    This software platform functions as an automated data validation sandbox for evaluating heart failure risk arrays.
-    It reads physiological vectors to help clinical practitioners run quick risk assessments.
-    <br><br>
-    <b>Core Architectural Specification Metrics:</b>
-    </div>
-    """, unsafe_allow_html=True)
-    
     specs_df = pd.DataFrame({
         "System Pipeline Layer": ["1. Intake Data Regularization", "2. Vector Processing Transformer", "3. Analytics Classifiers Sandbox", "4. Report Compiler Factory"],
-        "Operational Scope & Functional Target Goals": [
-            "Handles automated structural input variable verification and out-of-bounds error mitigation.",
-            "Normalizes patient metrics to prevent scaling conflicts between large numbers (like platelets) and decimals.",
-            "Executes machine learning algorithms concurrently to calculate real-time patient validation weights.",
-            "Assembles dynamic clinical records, evaluates risk levels, and exports results cleanly."
-        ],
-        "Platform Dependencies": ["Python 3.11 / Streamlit Engine", "Scikit-Learn Preprocessing", "XGBoost Framework Module", "Matplotlib / Native Core Tables"]
+        "Operational Scope & Functional Target Goals": ["Input variable verification", "Normalizes patient metrics", "Executes machine learning algorithms", "Assembles dynamic clinical records"],
+        "Platform Dependencies": ["Python / Streamlit", "Scikit-Learn", "XGBoost Core", "Matplotlib"]
     })
     st.table(specs_df)
