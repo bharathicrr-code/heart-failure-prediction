@@ -27,28 +27,29 @@ st.markdown("""
         display: inline-block;
         vertical-align: middle;
         font-family: 'Helvetica Neue', sans-serif;
+        padding-top: 5px;
     }
-    .custom-navbar {
-        text-align: right;
-        padding-top: 15px;
+    
+    /* MASK STREAMLIT RADIO TO LOOK LIKE CLEAN NAVBAR TEXT LINKS */
+    div[data-testid="stRadio"] > div {
+        justify-content: flex-end !important;
+        gap: 45px !important;
     }
-    .custom-nav-link {
-        font-size: 22px !important; 
+    div[data-testid="stRadio"] label {
+        font-size: 22px !important;
         font-weight: 700 !important;
         color: #555555 !important;
-        text-decoration: none !important;
-        margin-left: 45px !important;
-        transition: color 0.2s ease;
-        display: inline-block;
+        background: transparent !important;
+        border: none !important;
+        padding: 0px 0px 4px 0px !important;
+        cursor: pointer !important;
     }
-    .custom-nav-link:hover {
-        color: #0c5460 !important;
+    /* Native Active Indicator Hook */
+    div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
+        font-size: 22px !important;
+        font-weight: 700 !important;
     }
-    .custom-nav-active {
-        color: #0c5460 !important;
-        border-bottom: 3px solid #0c5460 !important;
-        padding-bottom: 2px;
-    }
+    
     .hero-title {
         font-size: 46px !important;
         font-weight: 800 !important;
@@ -98,12 +99,6 @@ st.markdown("""
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-query_params = st.query_params
-if "nav" in query_params:
-    st.session_state.current_nav = query_params["nav"]
-elif "current_nav" not in st.session_state:
-    st.session_state.current_nav = "HOME"
-
 if "patient_data" not in st.session_state:
     st.session_state.patient_data = None
 if "prediction_made" not in st.session_state:
@@ -115,7 +110,7 @@ def load_data():
     return pd.read_csv("heart_failure_clinical_records_dataset.csv")
 
 # -----------------------------------------------------------------
-# MODULE 1: LOGIN MODULE INTERFACE (Runs out-of-bounds to act as gateway)
+# MODULE 1: LOGIN MODULE INTERFACE
 # -----------------------------------------------------------------
 if not st.session_state.logged_in:
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -140,7 +135,7 @@ if not st.session_state.logged_in:
     st.stop()
 
 # -----------------------------------------------------------------
-# MAIN APP BODY (Executes only after user is logged_in)
+# MAIN APP MODULES (Executes Post-Authentication)
 # -----------------------------------------------------------------
 try:
     df = load_data()
@@ -153,28 +148,21 @@ try:
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    # NATIVE STYLE TOP MENU LINK SETUP
-    col_logo, col_menu = st.columns([6, 6])
+    # TWO-COLUMN HEADER NAVIGATION STRUCTURE
+    col_logo, col_menu = st.columns([5, 7])
     
     with col_logo:
         st.markdown('<div class="nav-logo">🩺 Heart Failure Prediction System</div>', unsafe_allow_html=True)
         
     with col_menu:
-        h_class = "custom-nav-link custom-nav-active" if st.session_state.current_nav == "HOME" else "custom-nav-link"
-        i_class = "custom-nav-link custom-nav-active" if st.session_state.current_nav == "INTAKE" else "custom-nav-link"
-        m_class = "custom-nav-link custom-nav-active" if st.session_state.current_nav == "EVALUATION" else "custom-nav-link"
-        r_class = "custom-nav-link custom-nav-active" if st.session_state.current_nav == "REPORT" else "custom-nav-link"
-        a_class = "custom-nav-link custom-nav-active" if st.session_state.current_nav == "ABOUT" else "custom-nav-link"
-        
-        st.markdown(f"""
-            <div class="custom-navbar">
-                <a href="?nav=HOME" target="_self" class="{h_class}">HOME</a>
-                <a href="?nav=INTAKE" target="_self" class="{i_class}">FORM</a>
-                <a href="?nav=EVALUATION" target="_self" class="{m_class}">MODELS</a>
-                <a href="?nav=REPORT" target="_self" class="{r_class}">REPORT</a>
-                <a href="?nav=ABOUT" target="_self" class="{a_class}">ABOUT</a>
-            </div>
-        """, unsafe_allow_html=True)
+        # Smooth native state radio selector acts as navbar
+        nav_selection = st.radio(
+            "",
+            ["HOME", "FORM", "MODELS", "REPORT", "ABOUT"],
+            horizontal=True,
+            label_visibility="collapsed"
+        )
+        st.session_state.current_nav = nav_selection
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -203,9 +191,9 @@ try:
             """, unsafe_allow_html=True)
             
             st.markdown("<br>", unsafe_allow_html=True)
+            # Home context button updates nav state without reloading page
             if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
-                st.query_params["nav"] = "INTAKE"
-                st.session_state.current_nav = "INTAKE"
+                st.session_state.current_nav = "FORM"
                 st.rerun()
                 
         with col_graphic:
@@ -219,9 +207,9 @@ try:
             """, unsafe_allow_html=True)
 
     # ---------------------------------------------------------
-    # MODULE 3: PATIENT DETAILS ENTRY MODULE
+    # MODULE 3: PATIENT DETAILS ENTRY MODULE (FORM)
     # ---------------------------------------------------------
-    elif st.session_state.current_nav == "INTAKE":
+    elif st.session_state.current_nav == "FORM":
         st.subheader("Patient Administrative Records & Vector Matrix")
         
         col_id1, col_id2 = st.columns(2)
@@ -259,14 +247,14 @@ try:
                 "sex": sex, "smoking": smoking, "time": time
             }
             st.session_state.prediction_made = False
-            st.query_params["nav"] = "EVALUATION"
-            st.session_state.current_nav = "EVALUATION"
+            st.session_state.current_nav = "MODELS"
+            st.colors = "#0c5460"
             st.rerun()
 
     # ---------------------------------------------------------
-    # MODULE 4: PREDICTION MODULE (Featuring explicit Seaborn Fix)
+    # MODULE 4: PREDICTION MODULE (MODELS)
     # ---------------------------------------------------------
-    elif st.session_state.current_nav == "EVALUATION":
+    elif st.session_state.current_nav == "MODELS":
         st.subheader("Machine Learning Prediction Engine Module")
         st.info("⚙️ Model Sandbox Configuration: Choose the processing backbone algorithm, view accuracy metrics, and click 'Execute Analysis Prediction' to output status profiles.")
         
@@ -297,7 +285,6 @@ try:
         if importance_values is not None:
             feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
             fig, ax = plt.subplots(figsize=(10, 3.5))
-            # HUE SET EXPLICITLY TO COMPLY WITH MODERN SEABORN REQUIREMENTS
             sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', hue='Feature Vector', legend=False, ax=ax)
             st.pyplot(fig)
             
@@ -317,7 +304,7 @@ try:
                 st.success("Analysis calculation compiled successfully. Check the outputs generated inside the Reports module.")
 
     # ---------------------------------------------------------
-    # MODULE 5: REPORTS MODULE
+    # MODULE 5: REPORTS MODULE (REPORT)
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "REPORT":
         st.subheader("Reports Generation & Dossier Export Module")
@@ -372,7 +359,7 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
             )
 
     # ---------------------------------------------------------
-    # MODULE 6: HELP / ABOUT MODULE
+    # MODULE 6: HELP / ABOUT MODULE (ABOUT)
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "ABOUT":
         st.subheader("Help / About Module - Diagnostic Specifications")
@@ -389,4 +376,4 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
         """, unsafe_allow_html=True)
 
 except Exception as e:
-    st.error(f"System Dataset Link Missing: Please check that 'heart_failure_clinical_records_dataset.csv' is uploaded inside your GitHub main branch next to app.py.")
+    st.error(f"System Operational Interruption: Verify dataset presence.")
