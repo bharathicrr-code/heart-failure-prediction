@@ -17,6 +17,12 @@ st.set_page_config(page_title="Heart Failure Prediction System", layout="wide")
 # --- GLOBAL FORCED HIGH-READABILITY INTERFACE CSS ---
 st.markdown("""
     <style>
+    /* Remove padding at top of page to maximize glance visibility */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
     /* 1. PENETRATE THROUGH SHADOW DOM TO FORCE MASSIVE FONTS FOR ALL INPUTS, LABELS, & DROPDOWNS */
     html, body, [data-testid="stWidgetLabel"] p, .stSelectbox div, .stTextInput input, div[data-baseweb="select"] * {
         font-size: 26px !important;
@@ -40,16 +46,29 @@ st.markdown("""
         color: white !important;
     }
 
-    /* 3. HIGHLIGHTED LOGIN COMPONENT BUTTON */
+    /* 3. CENTERED AND STYLED LOGIN BUTTON (MATCHES NAVBAR STYLE) */
+    div[data-testid="stForm"] {
+        border: none !important;
+        padding: 0 !important;
+    }
     div.stForm submit_button, div[data-testid="stForm"] button {
-        background-color: #ffc107 !important; /* Vivid Highlighted Gold */
-        color: #1a3a4b !important;
-        font-size: 28px !important;
-        font-weight: 900 !important;
-        border: 3px solid #1a3a4b !important;
+        background-color: #0c5460 !important; /* Navy blue background */
+        color: white !important;
+        font-size: 24px !important;
+        font-weight: 800 !important;
         padding: 15px 30px !important;
-        width: 100% !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
+        width: auto !important;
+        min-width: 250px !important;
+        display: block !important;
+        margin: 20px auto !important; /* Centered layout placement */
+        text-transform: uppercase !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+    }
+    
+    /* Remove yellow backgrounds from specific input boxes */
+    div[data-testid="stForm"] .stTextInput input {
+        background-color: transparent !important;
     }
     
     /* 4. GENERAL PAGE ACTION BUTTON RULES */
@@ -93,10 +112,9 @@ if "patient_data" not in st.session_state:
 
 # --- AUTHENTICATION GATEWAY ---
 if not st.session_state.logged_in:
-    st.markdown("<br><br>", unsafe_allow_html=True)
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
-        st.markdown("<h2 style='text-align: center; color: #1a3a4b;'>🔒 System Authentication Gateway</h2>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color: #1a3a4b; margin-top: 20px;'>🔒 Login Page</h1>", unsafe_allow_html=True)
         with st.form("login_form"):
             username = st.text_input("Username / Clinician Identification Badge Key", value="admin")
             password = st.text_input("Secure Password Access Key", type="password", value="password")
@@ -121,7 +139,7 @@ X_test_scaled = scaler.transform(X_test)
 
 # --- NAVIGATION HEAD NAVBAR ---
 st.markdown("""
-    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px; border-bottom: 4px solid #0c5460;">
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-bottom: 4px solid #0c5460;">
         <h2 style="margin:0; color: #1a3a4b;">🩺 Heart Failure Prediction System</h2>
     </div>
 """, unsafe_allow_html=True)
@@ -138,34 +156,35 @@ with col_n4:
 with col_n5:
     if st.button("ℹ️ SYSTEM ABOUT", key="nav_about", use_container_width=True): st.session_state.current_nav = "ABOUT"; st.rerun()
 
-# --- MODULE 1: HOME VIEW (RESTORED TEXT CONTENT) ---
+# --- MODULE 1: HOME VIEW ---
 if st.session_state.current_nav == "HOME":
-    col_info, col_graphic = st.columns([11, 9])
-    with col_info:
-        st.markdown('<div class="hero-title">CardioShield Predictive Clinical Portal</div>', unsafe_allow_html=True)
-        st.markdown('<div class="hero-subtitle">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
-        st.markdown("""
-        <div class="hero-body">
-        This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
-        By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
-        <br><br>
+    st.markdown('<div class="hero-title" style="text-align: center;">Heart Failure Prediction System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-subtitle" style="text-align: center;">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
+    
+    # Placed the original inline ECG diagram perfectly centered with empty right gaps fixed
+    st.markdown("""
+        <div style="text-align:center; padding: 30px 0;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 50%; max-width: 500px; margin: 0 auto;">
+                <path d="M 10 50 L 150 50 L 170 20 L 190 80 L 210 5 L 230 95 L 250 50 L 350 50 L 370 20 L 390 80 L 410 5 L 430 95 L 450 50 L 590 50 Z"/>
+            </svg>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="hero-body" style="text-align: center; max-width: 900px; margin: 0 auto;">
+    This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
+    By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
+    <br><br>
+    <div style="text-align: left; display: inline-block;">
         <b>Key System Design Pillars:</b>
         <ul>
             <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
             <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
             <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
         </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with col_graphic:
-        st.markdown("""
-            <div style="text-align:center; padding-top:60px;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:100%;">
-                    <path d="M 10 75 L 50 75 L 65 35 L 80 115 L 95 5 L 110 95 L 125 75 L 175 75 L 190 35 L 205 115 L 220 5 L 235 95 L 250 75 Z"/>
-                </svg>
-            </div>
-        """, unsafe_allow_html=True)
+    </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
         st.session_state.current_nav = "FORM"
@@ -204,7 +223,7 @@ elif st.session_state.current_nav == "FORM":
         st.session_state.current_nav = "MODELS"
         st.rerun()
 
-# --- MODULE 3: MODELS VIEW (RESCALED GRAPH TO FIT PAGE) ---
+# --- MODULE 3: MODELS VIEW ---
 elif st.session_state.current_nav == "MODELS":
     st.markdown("<h2 style='color:#1a3a4b;'>⚙️ Machine Learning Prediction Engine Module</h2>", unsafe_allow_html=True)
     model_choice = st.selectbox("Select Active Machine Learning Analytics Engine", ["Random Forest Classifier", "Logistic Regression Framework", "XGBoost Core Engine", "Decision Tree Model", "Support Vector Machine (SVM)"])
@@ -220,15 +239,15 @@ elif st.session_state.current_nav == "MODELS":
     
     st.markdown(f"<h4>Calculated Dataset Accuracy: {accuracy * 100:.2f}%</h4>", unsafe_allow_html=True)
     
-    # NORMAL COMPACT SIZE GRAPH ADJUSTMENT
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
     feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
     
-    fig, ax = plt.subplots(figsize=(8, 3.5)) # Scaled down significantly to sit cleanly on screen page
-    sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', hue='Feature Vector', legend=False, ax=ax)
-    ax.tick_params(labelsize=10)
-    ax.set_ylabel("Feature Vector", fontsize=11, fontweight='bold')
-    ax.set_xlabel("Weight Importance", fontsize=11, fontweight='bold')
+    # COMPACT GRAPH AND REVERSED PALETTE ('viridis_r')
+    fig, ax = plt.subplots(figsize=(6, 2.5))
+    sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis_r', hue='Feature Vector', legend=False, ax=ax)
+    ax.tick_params(labelsize=8)
+    ax.set_ylabel("Feature Vector", fontsize=9, fontweight='bold')
+    ax.set_xlabel("Weight Importance", fontsize=9, fontweight='bold')
     plt.tight_layout()
     st.pyplot(fig)
     
@@ -266,10 +285,28 @@ elif st.session_state.current_nav == "REPORT":
             "Monitored Clinical Attribute Fields": ["Patient Full Identification Name", "Hospital Reference Tracking Key", "Evaluated Age Bracket", "Selected Algorithmic Engine", "Ejection Fraction Target Metric", "Serum Creatinine Density Value"],
             "Assigned Patient Vector Values": [p['patient_name'], p['patient_id'], f"{p['age']} Years Old", str(st.session_state.model_choice), f"{p['ejection_fraction']}% Ratio", f"{p['serum_creatinine']} mg/dL"]
         }
-        st.table(pd.DataFrame(metrics_display))
+        report_df = pd.DataFrame(metrics_display)
+        st.table(report_df)
+        
+        # RESTORED MISSING DOWNLOAD BUTTON COMPONENT
+        csv_data = report_df.to_csv(index=False).encode('utf-8')
+        st.download_button(label="📥 DOWNLOAD PATIENT EVALUATION REPORT", data=csv_data, file_name=f"Clinical_Report_{p['patient_id']}.csv", mime="text/csv")
 
 # --- MODULE 5: SYSTEM ABOUT VIEW ---
 elif st.session_state.current_nav == "ABOUT":
     st.markdown("<h2>ℹ️ Help / About Module</h2>", unsafe_allow_html=True)
-    specs_df = pd.DataFrame({"System Pipeline Layer": ["Intake Layer", "Processing Transformer"], "Scope": ["Verification", "Normalization"]})
-    st.table(specs_df)
+    
+    # FULL DETAILED COMPREHENSIVE ORIGINAL TABLE DATA RESTORED
+    about_data = {
+        "System Pipeline Layer": [
+            "Data Acquisition Layer", "Intake Verification Layer", "Feature Standardization Engine", 
+            "Model Processing Transformer", "Risk Assessment Vector Classifier", "Report Synthesis Engine",
+            "Cryptographic Authentication Desk", "System Configuration Portal", "Metadata Logging Framework"
+        ],
+        "Scope": [
+            "Ingestion", "Validation", "Normalization", 
+            "Inference Pipeline", "Stratification", "Export Utility",
+            "Access Validation", "System Parametrization", "Audit Registry Trace"
+        ]
+    }
+    st.table(pd.DataFrame(about_data))
