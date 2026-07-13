@@ -17,82 +17,84 @@ st.set_page_config(page_title="Heart Failure Prediction System", layout="wide")
 # --- GLOBAL FORCED HIGH-READABILITY INTERFACE CSS ---
 st.markdown("""
     <style>
-    /* Remove padding at top of page to maximize glance visibility */
+    /* Premium Page Optimization & Padding Management */
     .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 3rem !important;
     }
 
-    /* 1. PENETRATE THROUGH SHADOW DOM TO FORCE MASSIVE FONTS FOR ALL INPUTS, LABELS, & DROPDOWNS */
+    /* 1. GLOBAL HIGH-READABILITY TYPOGRAPHY PERFECTION */
     html, body, [data-testid="stWidgetLabel"] p, .stSelectbox div, .stTextInput input, div[data-baseweb="select"] * {
-        font-size: 26px !important;
-        font-weight: 700 !important;
-        color: #1a3a4b !important;
-    }
-    
-    /* Make input boxes vertically spacious to accommodate large fonts */
-    .stTextInput input, div[data-testid="stSelectbox-Trigger"] {
-        min-height: 60px !important;
-    }
-    
-    /* 2. FORCE MAXIMUM SCALING FOR DATA EVALUATION TABLES (BOTH LABELS & ROWS) */
-    [data-testid="stTable"] table th, [data-testid="stTable"] td {
         font-size: 24px !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
         color: #1a3a4b !important;
+    }
+    
+    .stTextInput input, div[data-testid="stSelectbox-Trigger"] {
+        min-height: 55px !important;
+        background-color: #ffffff !important;
+        border: 2px solid #ced4da !important;
+        border-radius: 6px !important;
+    }
+    
+    /* 2. SYSTEM DATA TABLES DESIGN SPECIFICATION */
+    [data-testid="stTable"] table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-bottom: 50px !important;
     }
     [data-testid="stTable"] table th {
         background-color: #0c5460 !important;
         color: white !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        padding: 18px !important;
+        text-align: left !important;
+    }
+    [data-testid="stTable"] td {
+        font-size: 22px !important;
+        font-weight: 500 !important;
+        color: #2b2b2b !important;
+        padding: 16px !important;
+        border-bottom: 1px solid #dee2e6 !important;
     }
 
-    /* 3. CENTERED AND STYLED LOGIN BUTTON (MATCHES NAVBAR STYLE) */
-    div[data-testid="stForm"] {
-        border: none !important;
-        padding: 0 !important;
-    }
-    div.stForm submit_button, div[data-testid="stForm"] button {
-        background-color: #0c5460 !important; /* Navy blue background */
-        color: white !important;
-        font-size: 24px !important;
-        font-weight: 800 !important;
-        padding: 15px 30px !important;
-        border-radius: 10px !important;
-        width: auto !important;
-        min-width: 250px !important;
-        display: block !important;
-        margin: 20px auto !important; /* Centered layout placement */
-        text-transform: uppercase !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
+    /* 3. CLASSY, CENTERED CARD PATTERN FOR THE LOGIN PORTAL */
+    .login-container {
+        background-color: #ffffff;
+        padding: 45px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+        max-width: 550px;
+        margin: 40px auto !important;
     }
     
-    /* Remove yellow backgrounds from specific input boxes */
-    div[data-testid="stForm"] .stTextInput input {
-        background-color: transparent !important;
-    }
-    
-    /* 4. GENERAL PAGE ACTION BUTTON RULES */
-    div.stButton > button, div.stDownloadButton > button {
+    /* 4. EXECUTIVE APP BUTTON ACTIONS */
+    div.stButton > button, div.stDownloadButton > button, div.stForm submit_button, div[data-testid="stForm"] button {
         background-color: #0c5460 !important;
         color: white !important;
-        border-radius: 10px !important;
-        padding: 20px 40px !important;
-        font-size: 24px !important;
-        font-weight: 800 !important;
-        width: 100% !important;
-        max-width: 500px !important;
+        border-radius: 8px !important;
+        padding: 14px 36px !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        width: auto !important;
+        min-width: 240px !important;
         display: block !important;
-        margin: 40px auto !important;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.22) !important;
+        margin: 30px auto !important;
+        box-shadow: 0 4px 12px rgba(12, 84, 96, 0.2) !important;
+        border: none !important;
+        transition: all 0.2s ease;
         text-transform: uppercase !important;
+        letter-spacing: 0.5px;
     }
     
-    /* 5. TYPOGRAPHY CORES */
-    .hero-title { font-size: 46px !important; font-weight: 800; color: #1a3a4b; }
-    .hero-subtitle { font-size: 32px !important; font-weight: 700; color: #0c5460; }
-    .hero-body { font-size: 24px !important; line-height: 1.8 !important; color: #2b2b2b; }
+    /* Typography Cleanliness Rules */
+    .hero-title { font-size: 44px !important; font-weight: 800; color: #1a3a4b; margin-bottom: 10px; }
+    .hero-subtitle { font-size: 28px !important; font-weight: 600; color: #0c5460; margin-bottom: 25px; }
+    .hero-body { font-size: 24px !important; line-height: 1.7 !important; color: #333333; }
     
-    /* ASSESSMENT REPORT TIERS */
+    /* REPORT STATUS TIERS */
     .assessment-box-safe { background-color: #28a745 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
     .assessment-box-borderline { background-color: #fd7e14 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
     .assessment-box-severe { background-color: #dc3545 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
@@ -112,10 +114,20 @@ if "patient_data" not in st.session_state:
 
 # --- AUTHENTICATION GATEWAY ---
 if not st.session_state.logged_in:
-    col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
+    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    
+    # Styled clean HTML architecture wrapper card block for a luxury presentation
+    st.markdown("""
+        <div class="login-container">
+            <h2 style="text-align: center; color: #1a3a4b; font-size: 36px; margin-top: 0; font-weight: 800;">🔒 Login Page</h2>
+            <p style="text-align: center; color: #6c757d; font-size: 18px; margin-bottom: 30px;">Please authenticate your clinical credentials to access patient dashboards.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Render fields strictly within a clean, centered interface column grid split
+    col_l1, col_l2, col_l3 = st.columns([1.2, 2, 1.2])
     with col_l2:
-        st.markdown("<h1 style='text-align: center; color: #1a3a4b; margin-top: 20px;'>🔒 Login Page</h1>", unsafe_allow_html=True)
-        with st.form("login_form"):
+        with st.form("login_form", clear_on_submit=False):
             username = st.text_input("Username / Clinician Identification Badge Key", value="admin")
             password = st.text_input("Secure Password Access Key", type="password", value="password")
             submit_login = st.form_submit_button("LOGIN")
@@ -137,10 +149,10 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# --- NAVIGATION HEAD NAVBAR ---
+# --- NAVIGATION HEADER NAVBAR (CLEAN HEADER PLACEMENT) ---
 st.markdown("""
     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-bottom: 4px solid #0c5460;">
-        <h2 style="margin:0; color: #1a3a4b;">🩺 Heart Failure Prediction System</h2>
+        <h2 style="margin:0; color: #1a3a4b; font-weight: 800;">🩺 Heart Failure Prediction System</h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -154,30 +166,30 @@ with col_n3:
 with col_n4:
     if st.button("📊 DIAGNOSTIC REPORT", key="nav_report", use_container_width=True): st.session_state.current_nav = "REPORT"; st.rerun()
 with col_n5:
-    if st.button("ℹ️ SYSTEM ABOUT", key="nav_about", use_container_width=True): st.session_state.current_nav = "ABOUT"; st.rerun()
+    if st.button("ℹ️ SYSTEM HELP", key="nav_about", use_container_width=True): st.session_state.current_nav = "ABOUT"; st.rerun()
 
-# --- MODULE 1: HOME VIEW ---
+# --- MODULE 1: HOME VIEW (WELL-STRUCTURED & SYMMETRICAL) ---
 if st.session_state.current_nav == "HOME":
-    st.markdown('<div class="hero-title" style="text-align: center;">Heart Failure Prediction System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-title" style="text-align: center; margin-top: 15px;">Heart Failure Prediction System</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-subtitle" style="text-align: center;">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
     
-    # Placed the original inline ECG diagram perfectly centered with empty right gaps fixed
+    # Original ECG heartbeat line metric visual perfectly re-centered
     st.markdown("""
-        <div style="text-align:center; padding: 30px 0;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 50%; max-width: 500px; margin: 0 auto;">
+        <div style="text-align:center; padding: 20px 0;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 45%; max-width: 450px; margin: 0 auto;">
                 <path d="M 10 50 L 150 50 L 170 20 L 190 80 L 210 5 L 230 95 L 250 50 L 350 50 L 370 20 L 390 80 L 410 5 L 430 95 L 450 50 L 590 50 Z"/>
             </svg>
         </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="hero-body" style="text-align: center; max-width: 900px; margin: 0 auto;">
+    <div class="hero-body" style="text-align: center; max-width: 950px; margin: 0 auto; padding-bottom: 20px;">
     This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
     By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
     <br><br>
-    <div style="text-align: left; display: inline-block;">
-        <b>Key System Design Pillars:</b>
-        <ul>
+    <div style="text-align: left; display: inline-block; background-color: #f8f9fa; padding: 30px; border-radius: 8px; border-left: 5px solid #0c5460; width: 100%;">
+        <b style="font-size: 26px; color: #1a3a4b;">Key System Design Pillars:</b>
+        <ul style="margin-top: 10px;">
             <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
             <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
             <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
@@ -242,7 +254,7 @@ elif st.session_state.current_nav == "MODELS":
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
     feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
     
-    # COMPACT GRAPH AND REVERSED PALETTE ('viridis_r')
+    # REVERSED COLOR SCHEME AND COMPACT CONTAINER ADJUSTMENT
     fig, ax = plt.subplots(figsize=(6, 2.5))
     sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis_r', hue='Feature Vector', legend=False, ax=ax)
     ax.tick_params(labelsize=8)
@@ -288,25 +300,35 @@ elif st.session_state.current_nav == "REPORT":
         report_df = pd.DataFrame(metrics_display)
         st.table(report_df)
         
-        # RESTORED MISSING DOWNLOAD BUTTON COMPONENT
         csv_data = report_df.to_csv(index=False).encode('utf-8')
         st.download_button(label="📥 DOWNLOAD PATIENT EVALUATION REPORT", data=csv_data, file_name=f"Clinical_Report_{p['patient_id']}.csv", mime="text/csv")
 
-# --- MODULE 5: SYSTEM ABOUT VIEW ---
+# --- MODULE 5: SYSTEM HELP (EXAMINER-FRIENDLY & EASY TO EXPLAIN) ---
 elif st.session_state.current_nav == "ABOUT":
-    st.markdown("<h2>ℹ️ Help / About Module</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: #1a3a4b;'>ℹ️ Project Presentation Help Desk</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 22px; color: #555; margin-bottom: 25px;'>Use this architectural mapping table to easily explain the system pipeline flow and model scope stages directly to your evaluation examiners.</p>", unsafe_allow_html=True)
     
-    # FULL DETAILED COMPREHENSIVE ORIGINAL TABLE DATA RESTORED
-    about_data = {
-        "System Pipeline Layer": [
-            "Data Acquisition Layer", "Intake Verification Layer", "Feature Standardization Engine", 
-            "Model Processing Transformer", "Risk Assessment Vector Classifier", "Report Synthesis Engine",
-            "Cryptographic Authentication Desk", "System Configuration Portal", "Metadata Logging Framework"
+    # Highly impactful, easy-to-explain dataset tailored for examiner reviews
+    presentation_help_data = {
+        "Core Project Lifecycle Stage": [
+            "1. Clinical Ingestion Pipeline", 
+            "2. Vector Data Normalization", 
+            "3. Multi-Model Inference Core", 
+            "4. Dynamic Risk Stratification", 
+            "5. Automated Report Synthesis",
+            "6. Security Access Layer"
         ],
-        "Scope": [
-            "Ingestion", "Validation", "Normalization", 
-            "Inference Pipeline", "Stratification", "Export Utility",
-            "Access Validation", "System Parametrization", "Audit Registry Trace"
+        "Functional Project Scope & Purpose (For Examiners)": [
+            "Captures active data indicators from health records securely via clinical entry fields.",
+            "Uses StandardScaler tracking to eliminate value anomalies and balance numeric ranges.",
+            "Executes user-selected ML algorithms (Random Forest, XGBoost, etc.) to evaluate patient data.",
+            "Calculates probability metrics and assigns safe, borderline, or severe condition flags.",
+            "Formats data into structural record matrices and outputs an external, downloadable document.",
+            "Guards administrative gateways via unified identification keys to defend records."
         ]
     }
-    st.table(pd.DataFrame(about_data))
+    
+    st.table(pd.DataFrame(presentation_help_data))
+    
+    # STRUCTURAL VIEWPORT ACCESSIBILITY FIX: Explicit structural spacing cushion to protect table readability from screen cutoff
+    st.markdown("<div style='margin-bottom: 250px; height: 250px; display: block;'></div>", unsafe_allow_html=True)
