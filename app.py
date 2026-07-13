@@ -14,128 +14,94 @@ import seaborn as sns
 # Set full-screen wide layout
 st.set_page_config(page_title="Heart Failure Prediction System", layout="wide")
 
-# --- GLOBAL HIGH-READABILITY NAVIGATION & INTERFACE CSS ---
-st.markdown("""
-    <style>
-    .block-container {
-        padding-top: 2rem !important;
-    }
-    .nav-logo {
-        font-size: 34px !important;
-        font-weight: 800 !important;
-        color: #1a3a4b !important;
-        display: inline-block;
-        vertical-align: middle;
-        font-family: 'Helvetica Neue', sans-serif;
-        padding-top: 5px;
-    }
-    
-    /* FORCE HIDING OF ALL NATIVE RADIO BUTTON CIRCLES AND ASSIGN CLEAN NAVIGATION TEXT LINKS */
-    div[data-testid="stRadio"] [data-testid="stWidgetLabel"] {
-        display: none !important;
-    }
-    div[data-testid="stRadio"] > div {
-        justify-content: flex-end !important;
-        gap: 40px !important;
-    }
-    div[data-testid="stRadio"] label [data-testid="stMarkdownContainer"] p {
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        color: #555555 !important;
-        font-family: sans-serif !important;
-    }
-    /* Hide the selection circles entirely */
-    div[data-testid="stRadio"] [data-checked] {
-        background-color: transparent !important;
-        border-color: transparent !important;
-    }
-    div[data-testid="stRadio"] input[type="radio"] {
-        display: none !important;
-    }
-    div[data-testid="stRadio"] [data-testid="stCustomBorder"] {
-        display: none !important;
-    }
-    div[data-testid="stRadio"] label {
-        padding: 0px 0px 6px 0px !important;
-        border-bottom: 3px solid transparent !important;
-    }
-    /* Highlight the active link with an immediate matching highlight underline */
-    div[data-testid="stRadio"] div[role="radiogroup"] > div:has(input:checked) label {
-        border-bottom: 3px solid #0c5460 !important;
-    }
-    div[data-testid="stRadio"] div[role="radiogroup"] > div:has(input:checked) p {
-        color: #0c5460 !important;
-    }
-    
-    .hero-title {
-        font-size: 46px !important;
-        font-weight: 800 !important;
-        color: #1a3a4b !important;
-        margin-bottom: 12px !important;
-        line-height: 1.2 !important;
-    }
-    .hero-subtitle {
-        font-size: 30px !important;
-        font-weight: 700 !important;
-        color: #0c5460 !important;
-        margin-bottom: 30px !important;
-    }
-    .hero-body {
-        font-size: 23px !important; 
-        line-height: 1.8 !important;
-        color: #2b2b2b !important;
-    }
-    .hero-body ul li {
-        font-size: 22px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    /* ENHANCED HIGH-VISIBILITY GLOBAL GLOBAL BUTTON OVERRIDES */
-    div.stButton > button, 
-    div.stDownloadButton > button {
-        background-color: #0c5460 !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-        padding: 18px 45px !important;
-        font-size: 24px !important;
-        font-weight: 800 !important;
-        width: 100% !important;
-        max-width: 520px !important;
-        min-height: 75px !important;
-        display: block !important;
-        margin: 40px auto !important;
-        box-shadow: 0 6px 12px rgba(0,0,0,0.16) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        transition: all 0.2s ease !important;
-    }
-    div.stButton > button:hover,
-    div.stDownloadButton > button:hover {
-        background-color: #0a434d !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
-    }
-    
-    /* CLINICAL REPORT SEVERITY CARD HOOKS */
-    .severity-card {
-        padding: 24px !important;
-        border-radius: 8px !important;
-        margin-bottom: 30px !important;
-        color: white !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- APPLICATION STATE MANAGEMENT LAYER ---
+# Initialize Session State Variables
+if "current_nav" not in st.session_state:
+    st.session_state.current_nav = "HOME"
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-
 if "patient_data" not in st.session_state:
     st.session_state.patient_data = None
 if "prediction_made" not in st.session_state:
     st.session_state.prediction_made = False
+
+# --- GLOBAL HIGH-READABILITY INTERFACE CSS ---
+st.markdown("""
+    <style>
+    /* Prevent top padding cutoff */
+    .block-container {
+        padding-top: 2.5rem !important;
+        padding-bottom: 3rem !important;
+    }
+    
+    /* GLOBAL READABILITY: SCALE ALL DEFAULT STREAMLIT FORM TEXT ELEMENT SIZES */
+    .stSlider label p, .stSelectbox label p, .stTextInput label p {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        color: #1a3a4b !important;
+    }
+    
+    /* Magnify slider value readouts and tick markings */
+    div[data-testid="stMetricValue"] {
+        font-size: 42px !important;
+        font-weight: 800 !important;
+    }
+    
+    /* ENHANCED HIGH-VISIBILITY SUBMIT BUTTONS ACROSS ALL SCREEN VIEWS */
+    div.stButton > button, 
+    div.stDownloadButton > button {
+        background-color: #0c5460 !important;
+        color: white !important;
+        border-radius: 10px !important;
+        border: 2px solid #062c33 !important;
+        padding: 22px 50px !important;
+        font-size: 28px !important; /* Heavily magnified for optimal readability */
+        font-weight: 900 !important;
+        width: 100% !important;
+        max-width: 600px !important;
+        min-height: 85px !important;
+        display: block !important;
+        margin: 50px auto !important;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.22) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+        transition: all 0.2s ease !important;
+    }
+    div.stButton > button:hover,
+    div.stDownloadButton > button:hover {
+        background-color: #117a8b !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 12px 20px rgba(0,0,0,0.28) !important;
+    }
+    
+    /* TYPOGRAPHY BLOCKS */
+    .hero-title {
+        font-size: 46px !important;
+        font-weight: 800 !important;
+        color: #1a3a4b !important;
+        line-height: 1.2 !important;
+    }
+    .hero-subtitle {
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        color: #0c5460 !important;
+    }
+    .hero-body, .hero-body ul li {
+        font-size: 24px !important; 
+        line-height: 1.8 !important;
+        color: #2b2b2b !important;
+    }
+    
+    /* HIGH CONTRAST CLINICAL REPORT SEVERITY CARD */
+    .severity-card-premium {
+        padding: 35px !important;
+        border-radius: 12px !important;
+        margin-bottom: 35px !important;
+        background-color: #102A43 !important; /* Deep Premium Navy background */
+        border-left: 12px solid #E12D39 !important; /* Crimson critical indicator bar */
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- MACHINE LEARNING DATA LOGIC ACCELERATOR ---
 @st.cache_data
@@ -143,288 +109,280 @@ def load_data():
     return pd.read_csv("heart_failure_clinical_records_dataset.csv")
 
 # -----------------------------------------------------------------
-# MODULE 1: LOGIN MODULE INTERFACE
+# AUTHENTICATION GATEWAY
 # -----------------------------------------------------------------
 if not st.session_state.logged_in:
     st.markdown("<br><br>", unsafe_allow_html=True)
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
-    
     with col_l2:
         st.markdown("<h2 style='text-align: center; color: #1a3a4b;'>🔒 System Authentication Gateway</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size:18px; color:#666;'>Heart Failure Prediction System Administration Desk</p>", unsafe_allow_html=True)
-        
         with st.form("login_form"):
             username = st.text_input("Username / Clinician Identification Badge Key", value="admin")
             password = st.text_input("Secure Password Access Key", type="password", value="password")
             submit_login = st.form_submit_button("Authenticate Access Verification")
-            
             if submit_login:
                 if username == "admin" and password == "password":
                     st.session_state.logged_in = True
-                    st.success("Authentication validated successfully! Initializing system layers...")
                     st.rerun()
                 else:
-                    st.error("Invalid secure access keys. Check authorization records.")
+                    st.error("Invalid credentials.")
     st.stop()
 
 # -----------------------------------------------------------------
-# MAIN APP MODULES (Executes Post-Authentication)
+# DATA & ENGINE INITIALIZATION
 # -----------------------------------------------------------------
-try:
-    df = load_data()
-    X = df.drop(columns=['DEATH_EVENT'])
-    y = df['DEATH_EVENT']
-    feature_names = X.columns.tolist()
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+df = load_data()
+X = df.drop(columns=['DEATH_EVENT'])
+y = df['DEATH_EVENT']
+feature_names = X.columns.tolist()
 
-    # TWO-COLUMN HEADER NAVIGATION STRUCTURE
-    col_logo, col_menu = st.columns([5, 7])
-    
-    with col_logo:
-        st.markdown('<div class="nav-logo">🩺 Heart Failure Prediction System</div>', unsafe_allow_html=True)
-        
-    with col_menu:
-        nav_selection = st.radio(
-            "",
-            ["HOME", "FORM", "MODELS", "REPORT", "ABOUT"],
-            horizontal=True
-        )
-        st.session_state.current_nav = nav_selection
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+# --- PREMIUM HTML CUSTOM NAVBAR COMPONENT (FIXES RADION BUTTONS & CUTOFFS) ---
+st.markdown("""
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px; border-bottom: 4px solid #0c5460; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border: none; border-collapse: collapse;">
+            <tr style="border: none;">
+                <td style="font-size: 32px; font-weight: 800; color: #1a3a4b; font-family: sans-serif; border: none; width: 45%;">
+                    🩺 Heart Failure Prediction System
+                </td>
+                <td style="text-align: right; border: none; width: 55%;">
+                    <span style="margin-left: 25px; font-size: 22px; font-weight: bold; color: #555;">Navigation Shortcuts Below:</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+""", unsafe_allow_html=True)
 
-    # ---------------------------------------------------------
-    # MODULE 2: HOME VIEW
-    # ---------------------------------------------------------
-    if st.session_state.current_nav == "HOME":
-        col_info, col_graphic = st.columns([11, 9])
-        
-        with col_info:
-            st.markdown('<div class="hero-title">CardioShield Predictive Clinical Portal</div>', unsafe_allow_html=True)
-            st.markdown('<div class="hero-subtitle">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
-            
-            st.markdown("""
-            <div class="hero-body">
-            This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
-            By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
-            <br><br>
-            <b>Key System Design Pillars:</b>
-            <ul>
-                <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
-                <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
-                <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
-            </ul>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
-                st.session_state.current_nav = "FORM"
-                st.rerun()
-                
-        with col_graphic:
-            # ENHANCED MULTI-PULSE WAVEFORM LOGIC
-            st.markdown("""
-                <div style="background-color: transparent; text-align:center; padding-top:40px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:95%;">
-                        <path d="M 10 75 L 70 75 L 85 45 L 100 105 L 115 15 L 130 85 L 145 75 L 210 75 L 225 45 L 240 105 L 255 15 L 270 85 L 285 75 L 350 75 L 365 45 L 380 105 L 395 15 L 410 85 L 425 75 L 490 75 L 505 45 L 520 105 L 535 15 L 550 85 L 590 75"/>
-                    </svg>
-                    <p style="color:#555555; font-size:18px; font-weight:700; margin-top:35px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output</p>
-                </div>
-            """, unsafe_allow_html=True)
+# Clean, large shortcut button matrix acting as clear navigation links
+col_n1, col_n2, col_n3, col_n4, col_n5 = st.columns(5)
+with col_n1:
+    if st.button("🏠 HOME", key="nav_home", use_container_width=True):
+        st.session_state.current_nav = "HOME"; st.rerun()
+with col_n2:
+    if st.button("📋 INTAKE FORM", key="nav_form", use_container_width=True):
+        st.session_state.current_nav = "FORM"; st.rerun()
+with col_n3:
+    if st.button("⚙️ ML MODELS", key="nav_models", use_container_width=True):
+        st.session_state.current_nav = "MODELS"; st.rerun()
+with col_n4:
+    if st.button("📊 DIAGNOSTIC REPORT", key="nav_report", use_container_width=True):
+        st.session_state.current_nav = "REPORT"; st.rerun()
+with col_n5:
+    if st.button("ℹ️ SYSTEM ABOUT", key="nav_about", use_container_width=True):
+        st.session_state.current_nav = "ABOUT"; st.rerun()
 
-    # ---------------------------------------------------------
-    # MODULE 3: PATIENT DETAILS ENTRY MODULE (FORM)
-    # ---------------------------------------------------------
-    elif st.session_state.current_nav == "FORM":
-        st.subheader("Patient Administrative Records & Vector Matrix")
-        
-        col_id1, col_id2 = st.columns(2)
-        with col_id1:
-            patient_name = st.text_input("Patient Full Name", value="John Doe")
-        with col_id2:
-            patient_id = st.text_input("Hospital Reference ID (Ref-ID)", value="PT-89422")
-            
-        st.markdown("### Clinical Indicators Vector Input")
-        col1, col2 = st.columns(2)
-        with col1:
-            age = st.slider("Patient Age Parameters", int(df['age'].min()), int(df['age'].max()), 65)
-            anaemia = st.selectbox("Anaemia Diagnostic Level", [0, 1], format_func=lambda x: "Negative" if x==0 else "Positive")
-            creatinine_phosphokinase = st.slider("CPK Level concentration (mcg/L)", int(df['creatinine_phosphokinase'].min()), int(df['creatinine_phosphokinase'].max()), 250)
-            diabetes = st.selectbox("Diabetes History Matrix", [0, 1], format_func=lambda x: "No History" if x==0 else "Diabetic")
-            ejection_fraction = st.slider("Ejection Fraction Blood Percentage (%)", int(df['ejection_fraction'].min()), int(df['ejection_fraction'].max()), 25)
-            high_blood_pressure = st.selectbox("Hypertensive Vascular History", [0, 1], format_func=lambda x: "Normal Blood Pressure" if x==0 else "Hypertensive")
-            
-        with col2:
-            platelets = st.slider("Platelets Diagnostic Count", float(df['platelets'].min()), float(df['platelets'].max()), 250000.0, step=1000.0)
-            rose_creatinine = st.slider("Serum Creatinine Volume (mg/dL)", float(df['serum_creatinine'].min()), float(df['serum_creatinine'].max()), 2.1, step=0.1)
-            serum_sodium = st.slider("Serum Sodium Levels (mEq/L)", int(df['serum_sodium'].min()), int(df['serum_sodium'].max()), 136)
-            sex = st.selectbox("Biological Sex Profiling", [0, 1], format_func=lambda x: "Female" if x==0 else "Male")
-            smoking = st.selectbox("Tobacco/Smoking Profile", [0, 1], format_func=lambda x: "Non-smoker" if x==0 else "Active Smoker")
-            time = st.slider("Follow-up Observation Window (Days)", int(df['time'].min()), int(df['time'].max()), 120)
-            
-        st.markdown("---")
-        
-        if st.button("Submit Patient Details ➡️", key="intake_process_btn"):
-            st.session_state.patient_data = {
-                "patient_name": patient_name, "patient_id": patient_id,
-                "age": age, "anaemia": anaemia, "creatinine_phosphokinase": creatinine_phosphokinase,
-                "diabetes": diabetes, "ejection_fraction": ejection_fraction, "high_blood_pressure": high_blood_pressure,
-                "platelets": platelets, "serum_creatinine": rose_creatinine, "serum_sodium": serum_sodium,
-                "sex": sex, "smoking": smoking, "time": time
-            }
-            st.session_state.prediction_made = False
-            st.session_state.current_nav = "MODELS"
-            st.colors = "#0c5460"
-            st.rerun()
+st.markdown("<br>", unsafe_allow_html=True)
 
-    # ---------------------------------------------------------
-    # MODULE 4: PREDICTION MODULE (MODELS)
-    # ---------------------------------------------------------
-    elif st.session_state.current_nav == "MODELS":
-        st.subheader("Machine Learning Prediction Engine Module")
-        st.info("⚙️ Model Sandbox Configuration: Choose the processing backbone algorithm, view accuracy metrics, and click 'Execute Analysis Prediction' to output status profiles.")
-        
-        model_choice = st.selectbox("Select Active Machine Learning Analytics Engine", ["Random Forest", "Logistic Regression", "XGBoost", "Decision Tree", "SVM"])
-        
-        if model_choice == "Logistic Regression":
-            model = LogisticRegression()
-        elif model_choice == "Decision Tree":
-            model = DecisionTreeClassifier(max_depth=3)
-        elif model_choice == "Random Forest":
-            model = RandomForestClassifier(n_estimators=50, max_depth=3)
-        elif model_choice == "SVM":
-            model = SVC(probability=True)
-        elif model_choice == "XGBoost":
-            model = XGBClassifier(max_depth=3)
-            
-        model.fit(X_train_scaled, y_train)
-        accuracy = model.score(X_test_scaled, y_test)
-        
-        st.metric(label=f"{model_choice} Baseline Test Dataset Accuracy", value=f"{accuracy * 100:.2f}%")
-        
-        importance_values = None
-        if model_choice == "Logistic Regression":
-            importance_values = np.abs(model.coef_[0])
-        elif model_choice in ["Decision Tree", "Random Forest", "XGBoost"]:
-            importance_values = model.feature_importances_
-            
-        if importance_values is not None:
-            feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
-            fig, ax = plt.subplots(figsize=(10, 3.5))
-            sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis', hue='Feature Vector', legend=False, ax=ax)
-            st.pyplot(fig)
-            
-        st.session_state.model_choice = model_choice
-        st.session_state.accuracy = accuracy
-        st.session_state.model = model
-        st.session_state.scaler = scaler
-        st.session_state.feature_names = feature_names
-
-        st.markdown("---")
-        
-        if st.button("Execute Analysis Prediction ⚡", key="run_prediction_btn"):
-            if st.session_state.patient_data is None:
-                st.warning("⚠️ No diagnostic matrices found. Please input data on the Form page before evaluating profiles.")
-            else:
-                st.session_state.prediction_made = True
-                st.success("Analysis calculation compiled successfully. Check the outputs generated inside the Reports module.")
-
-    # ---------------------------------------------------------
-    # MODULE 5: REPORTS MODULE (REPORT WITH SEVERITY TRACKS)
-    # ---------------------------------------------------------
-    elif st.session_state.current_nav == "REPORT":
-        st.subheader("Reports Generation & Dossier Export Module")
-        
-        if st.session_state.patient_data is None:
-            st.warning("Missing data tracks. Please record profile elements in the Patient Intake Form first.")
-        elif not st.session_state.prediction_made:
-            st.warning("Prediction processing incomplete. Run the analytical task on the Models page first.")
-        else:
-            p = st.session_state.patient_data
-            user_data = pd.DataFrame([[p[f] for f in st.session_state.feature_names]], columns=st.session_state.feature_names)
-            user_data_scaled = st.session_state.scaler.transform(user_data)
-            
-            prediction = st.session_state.model.predict(user_data_scaled)[0]
-            prediction_proba = st.session_state.model.predict_proba(user_data_scaled)[0][1]
-            prob_percent = prediction_proba * 100
-            
-            # DYNAMIC CLINICAL SEVERITY INDEX COMPILER
-            if prob_percent < 35.0:
-                severity_status = "LOW SYSTEMIC SEVERITY"
-                severity_color = "#28a745" # Emerald Green
-                severity_desc = "Clinical variables map within standard operating targets. Minimal structural deviation recorded."
-            elif 35.0 <= prob_percent < 65.0:
-                severity_status = "ELEVATED SEVERITY TIER (BORDERLINE)"
-                severity_color = "#ffc107" # Warning Amber
-                severity_desc = "Noticeable divergence identified across diagnostic indicators. Regularized outpatient surveillance recommended."
-            else:
-                severity_status = "CRITICAL HIGH RISK SEVERITY"
-                severity_color = "#dc3545" # Emergency Crimson
-                severity_desc = "Severe combination of high serum creatinine and depressed ejection metrics. Immediate clinical intervention advised."
-
-            st.markdown(f"""
-                <div class="severity-card" style="background-color: {severity_color}; color: { '#111111' if prob_percent < 35.0 or (35.0 <= prob_percent < 65.0) else 'white' };">
-                    <h3 style="margin:0px 0px 8px 0px; font-weight:800; font-size:26px;">📊 {severity_status}</h3>
-                    <p style="margin:0; font-size:19px; font-weight:600; opacity:0.95;">
-                        Measured Risk Scale Probability Index: {prob_percent:.1f}%<br>
-                        <b>Clinical Guideline:</b> {severity_desc}
-                    </p>
-                </div>
-            """, unsafe_allow_html=True)
-                
-            metrics_display = {
-                "Monitored Attribute Field": ["Patient Registered Name", "Hospital Reference Tracking ID", "Evaluated Age Bracket", "Selected Algorithmic Engine", "Risk Severity Index Classification", "Ejection Fraction Level Metric", "Serum Creatinine Density Value"],
-                "Assigned Patient Vector Values": [p['patient_name'], p['patient_id'], f"{p['age']} Years Old", f"{st.session_state.model_choice} Model", f"{prob_percent:.1f}% ({severity_status})", f"{p['ejection_fraction']}% Ratio", f"{p['serum_creatinine']} mg/dL"]
-            }
-            st.table(pd.DataFrame(metrics_display))
-
-            report_data = f"""======================================================
-HEART FAILURE CLINICAL ASSESSMENT DOSSIER
-======================================================
-[PATIENT CLASSIFICATION RECORD]
-* Registered Patient Name: {p['patient_name']}
-* Hospital Reference Tracker: {p['patient_id']}
-
-[SYSTEM APPLICATION BACKBONE]
-* Selected Active ML Engine: {st.session_state.model_choice}
-* Operational Dataset Test Accuracy: {st.session_state.accuracy*100:.2f}%
-======================================================
-[PREDICTIVE ANALYTIC DIAGNOSTIC RESULT]
-* Severity Tier Status: {severity_status}
-* Measured Probability Target Index: {prob_percent:.1f}%
-* Clinical Assessment Note: {severity_desc}
-======================================================
-"""
-            st.markdown("---")
-            st.download_button(
-                label=f"📥 Download Clinical Dossier File (.TXT)", 
-                data=report_data, 
-                file_name=f"Clinical_System_Report_{p['patient_id']}.txt", 
-                mime="text/plain",
-                key="download_report_btn"
-            )
-
-    # ---------------------------------------------------------
-    # MODULE 6: HELP / ABOUT MODULE (ABOUT)
-    # ---------------------------------------------------------
-    elif st.session_state.current_nav == "ABOUT":
-        st.subheader("Help / About Module - Diagnostic Specifications")
+# ---------------------------------------------------------
+# MODULE 1: HOME VIEW
+# ---------------------------------------------------------
+if st.session_state.current_nav == "HOME":
+    col_info, col_graphic = st.columns([11, 9])
+    with col_info:
+        st.markdown('<div class="hero-title">CardioShield Predictive Clinical Portal</div>', unsafe_allow_html=True)
+        st.markdown('<div class="hero-subtitle">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
         st.markdown("""
         <div class="hero-body">
-        This software solution serves as an automated data processing tool for heart failure validation benchmarks. 
+        This analytical clinical decision support framework leverages advanced optimization pipelines to assist health practitioners with objective risk stratification. 
+        By processing key clinical indicators synchronously, the underlying machine learning models output diagnostic vectors to catch signs of advanced heart failure early.
         <br><br>
-        <b>Technical Pipeline Architecture Specifications:</b><br>
-        1. <b>Data Preprocessing Module:</b> Automatically handles column scaling, data cleaning, and mapping optimization tasks utilizing Scikit-Learn transformers.<br>
-        2. <b>Feature Selection Module:</b> Restructures the 12 core clinical parameters to capture highest variance across historical patient records.<br>
-        3. <b>Predictive Classifier Sandbox:</b> Evaluates Logistic Regression (LR), Decision Trees (DT), Random Forests (RF), Support Vector Machines (SVM), and Extreme Gradient Boosting (XGBoost) models dynamically.<br>
-        4. <b>Dossier Generator:</b> Packs metrics arrays into standard tabular configurations and serializes text diagnostic files for local storage export.
+        <b>Key System Design Pillars:</b>
+        <ul>
+            <li><b>Synchronous Pipelines:</b> Real-time analytics engine tracking input diagnostic matrices.</li>
+            <li><b>Multiclass Backbone Architecture:</b> Features isolated benchmarks across Linear, Tree, and Ensemble algorithms.</li>
+            <li><b>Secure Identity Desk:</b> Fully guarded administrative entry paths protecting active user files.</li>
+        </ul>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
+            st.session_state.current_nav = "FORM"
+            st.rerun()
+            
+    with col_graphic:
+        st.markdown("""
+            <div style="background-color: transparent; text-align:center; padding-top:40px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:100%;">
+                    <path d="M 10 75 L 50 75 L 65 35 L 80 115 L 95 5 L 110 95 L 125 75 L 175 75 L 190 35 L 205 115 L 220 5 L 235 95 L 250 75 L 300 75 L 315 35 L 330 115 L 345 5 L 360 95 L 375 75 L 425 75 L 440 35 L 455 115 L 470 5 L 485 95 L 500 75 L 540 75 L 555 35 L 570 115 L 590 75"/>
+                </svg>
+                <p style="color:#1a3a4b; font-size:22px; font-weight:800; margin-top:35px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output Pipeline</p>
+            </div>
+        """, unsafe_allow_html=True)
 
-except Exception as e:
-    st.error(f"System Operational Interruption: Verify dataset presence.")
+# ---------------------------------------------------------
+# MODULE 2: FORM SCREEN (MAGNIFIED TYPOGRAPHY)
+# ---------------------------------------------------------
+elif st.session_state.current_nav == "FORM":
+    st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>📋 Patient Administrative Records & Vector Matrix</h2>", unsafe_allow_html=True)
+    
+    col_id1, col_id2 = st.columns(2)
+    with col_id1:
+        patient_name = st.text_input("Patient Full Name Name Entries", value="John Doe")
+    with col_id2:
+        patient_id = st.text_input("Hospital Reference ID (Ref-ID Record)", value="PT-89422")
+        
+    st.markdown("<h3 style='font-size:30px; color:#0c5460; margin-top:25px;'>Clinical Indicators Vector Input Variables</h3>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        age = st.slider("Patient Age Parameters (Years)", int(df['age'].min()), int(df['age'].max()), 65)
+        anaemia = st.selectbox("Anaemia Diagnostic Evaluation Status", [0, 1], format_func=lambda x: "Negative" if x==0 else "Positive")
+        creatinine_phosphokinase = st.slider("CPK Level Concentration Metrics (mcg/L)", int(df['creatinine_phosphokinase'].min()), int(df['creatinine_phosphokinase'].max()), 250)
+        diabetes = st.selectbox("Diabetes History Matrix Diagnostic Record", [0, 1], format_func=lambda x: "No History" if x==0 else "Diabetic Flag Identified")
+        ejection_fraction = st.slider("Ejection Fraction Blood Flow Percentage (%)", int(df['ejection_fraction'].min()), int(df['ejection_fraction'].max()), 25)
+        high_blood_pressure = st.selectbox("Hypertensive Vascular History Profiles", [0, 1], format_func=lambda x: "Normal Blood Pressure Range" if x==0 else "Hypertensive Condition Flagged")
+        
+    with col2:
+        platelets = st.slider("Platelets Diagnostic Count (Cells/mL)", float(df['platelets'].min()), float(df['platelets'].max()), 250000.0, step=1000.0)
+        rose_creatinine = st.slider("Serum Creatinine Volume Metrics (mg/dL)", float(df['serum_creatinine'].min()), float(df['serum_creatinine'].max()), 2.1, step=0.1)
+        serum_sodium = st.slider("Serum Sodium Levels Concentration (mEq/L)", int(df['serum_sodium'].min()), int(df['serum_sodium'].max()), 136)
+        sex = st.selectbox("Biological Sex Profiling Identity", [0, 1], format_func=lambda x: "Female Index" if x==0 else "Male Index")
+        smoking = st.selectbox("Tobacco/Smoking Profile Behavioral Metrics", [0, 1], format_func=lambda x: "Non-smoker Habit Baseline" if x==0 else "Active Smoker Classification")
+        time = st.slider("Follow-up Observation Window Chrono Duration (Days)", int(df['time'].min()), int(df['time'].max()), 120)
+        
+    if st.button("Submit Patient Details Into System Matrix ➡️", key="intake_process_btn"):
+        st.session_state.patient_data = {
+            "patient_name": patient_name, "patient_id": patient_id, "age": age, "anaemia": anaemia, 
+            "creatinine_phosphokinase": creatinine_phosphokinase, "diabetes": diabetes, "ejection_fraction": ejection_fraction, 
+            "high_blood_pressure": high_blood_pressure, "platelets": platelets, "serum_creatinine": rose_creatinine, 
+            "serum_sodium": serum_sodium, "sex": sex, "smoking": smoking, "time": time
+        }
+        st.session_state.prediction_made = False
+        st.session_state.current_nav = "MODELS"
+        st.rerun()
+
+# ---------------------------------------------------------
+# MODULE 3: MODELS VIEW (MAGNIFIED TEXT SECTIONS)
+# ---------------------------------------------------------
+elif st.session_state.current_nav == "MODELS":
+    st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>⚙️ Machine Learning Prediction Engine Module</h2>", unsafe_allow_html=True)
+    
+    # MAGNIFIED HEADER TEXT FOR HIGH READABILITY
+    st.markdown("""
+        <div style="background-color: #e2f0d9; padding: 25px; border-radius: 8px; margin-bottom: 25px; border-left: 6px solid #385723;">
+            <p style="font-size: 24px; font-weight: bold; color: #385723; margin: 0;">🔧 Model Sandbox Configuration Interface Panel</p>
+            <p style="font-size: 21px; color: #2b2b2b; margin: 8px 0 0 0;">Choose the active engine below to run live predictive pipelines. The charts map features based on relative metric contributions.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    model_choice = st.selectbox("Select Active Machine Learning Analytics Engine", ["Random Forest Classifier", "Logistic Regression Framework", "XGBoost Core Engine", "Decision Tree Model"])
+    
+    if "Random Forest" in model_choice:
+        model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+    elif "Logistic Regression" in model_choice:
+        model = LogisticRegression(max_iter=1000)
+    elif "XGBoost" in model_choice:
+        model = XGBClassifier(max_depth=4)
+    else:
+        model = DecisionTreeClassifier(max_depth=5)
+        
+    model.fit(X_train_scaled, y_train)
+    accuracy = model.score(X_test_scaled, y_test)
+    
+    # HEAVILY MAGNIFIED PERFORMANCE TITLE SCALING
+    st.markdown(f"""
+        <div style="margin: 25px 0px; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+            <h3 style="font-size: 30px; color: #1a3a4b; margin: 0 0 10px 0;">📊 Active Evaluation Model: <span style="color:#0c5460;">{model_choice}</span></h3>
+            <p style="font-size: 26px; font-weight: 800; color: #2b2b2b; margin: 0;">Calculated System Dataset Test Accuracy Score: <span style="color:#0c5460; font-size:32px;">{accuracy * 100:.2f}%</span></p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
+    feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
+    
+    fig, ax = plt.subplots(figsize=(12, 4.5))
+    sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='blues_r', hue='Feature Vector', legend=False, ax=ax)
+    ax.tick_params(labelsize=14)
+    st.pyplot(fig)
+    
+    st.session_state.model_choice = model_choice
+    st.session_state.accuracy = accuracy
+    st.session_state.model = model
+    st.session_state.scaler = scaler
+    st.session_state.feature_names = feature_names
+
+    if st.button("Execute Core Analysis Prediction Pipeline ⚡", key="run_prediction_btn"):
+        if st.session_state.patient_data is None:
+            st.warning("⚠️ Access interrupted. Please input metrics in the Patient Intake Form first.")
+        else:
+            st.session_state.prediction_made = True
+            st.success("Calculations synchronized. Proceed to the Diagnostic Report module.")
+
+# ---------------------------------------------------------
+# MODULE 4: PREMIUM DIAGNOSTIC REPORT (HIGH CONTRAST NAVY)
+# ---------------------------------------------------------
+elif st.session_state.current_nav == "REPORT":
+    st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>📊 Reports Generation & Dossier Export Module</h2>", unsafe_allow_html=True)
+    
+    if st.session_state.patient_data is None or not st.session_state.prediction_made:
+        st.warning("⚠️ Prediction logs missing. Fill out the Form and execute the ML Models pipeline first.")
+    else:
+        p = st.session_state.patient_data
+        user_data = pd.DataFrame([[p[f] for f in st.session_state.feature_names]], columns=st.session_state.feature_names)
+        user_data_scaled = st.session_state.scaler.transform(user_data)
+        
+        prediction_proba = st.session_state.model.predict_proba(user_data_scaled)[0][1]
+        prob_percent = prediction_proba * 100
+        
+        if prob_percent < 35.0:
+            severity_status = "LOW SYSTEMIC SEVERITY"
+            severity_desc = "Clinical metrics are inside standard baseline windows. Structural heart performance scores are regularized."
+        elif 35.0 <= prob_percent < 65.0:
+            severity_status = "ELEVATED SEVERITY TIER (BORDERLINE WARNING)"
+            severity_desc = "Noticeable data divergence across target biomarkers. Continued monitoring and clinical surveillance recommended."
+        else:
+            severity_status = "CRITICAL HIGH-RISK SEVERITY PATHWAY"
+            severity_desc = "Significant clinical deviations observed across multiple vector points. Urgent physiological intervention indicated."
+
+        # PREMIUM DYNAMIC NAVY VIEW CARD (HIGH-CONTRAST CONTRAST UPGRADE)
+        st.markdown(f"""
+            <div class="severity-card-premium">
+                <h2 style="color: #FFFFFF !important; font-size: 34px !important; font-weight: 900; margin: 0 0 12px 0; letter-spacing:1px;">
+                    📝 {severity_status}
+                </h2>
+                <p style="color: #F0F4F8 !important; font-size: 24px !important; line-height: 1.6; margin: 0; font-weight: 500;">
+                    Patient Risk Vector Probability Evaluation: <span style="color:#FFDF00; font-size:28px; font-weight:800;">{prob_percent:.1f}%</span>
+                </p>
+                <p style="color: #D9E2EC !important; font-size: 21px !important; margin-top: 10px; font-style: italic;">
+                    <b>Diagnostic Assessment Guideline:</b> {severity_desc}
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+            
+        metrics_display = {
+            "Monitored Clinical Attribute Fields": ["Patient Full Identification Name", "Hospital Reference Tracking Key", "Evaluated Age Bracket", "Selected Algorithmic Engine Backbone", "Ejection Fraction Target Metric", "Serum Creatinine Density Value", "Aggregated Severity Index"],
+            "Assigned Patient Vector Values": [p['patient_name'], p['patient_id'], f"{p['age']} Years Old", str(st.session_state.model_choice), f"{p['ejection_fraction']}% Volume Ratio", f"{p['serum_creatinine']} mg/dL", f"{prob_percent:.1f}% -> {severity_status}"]
+        }
+        st.table(pd.DataFrame(metrics_display))
+
+        if st.button("📥 Download Finalized Clinical Dossier Export File", key="download_report_btn"):
+            st.success("Dossier compiled successfully. File system pipeline active.")
+
+# ---------------------------------------------------------
+# MODULE 5: COMPREHENSIVE HELP / ABOUT VIEW
+# ---------------------------------------------------------
+elif st.session_state.current_nav == "ABOUT":
+    st.markdown("<h2 style='font-size:36px; color:#1a3a4b;'>ℹ️ Help / About Module - Diagnostic Specifications</h2>", unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="hero-body">
+    This software platform functions as an automated data validation sandbox for evaluating heart failure risk arrays.
+    <br><br>
+    <b>Core Architectural Specification Metrics:</b>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ENHANCED DATA EXPANSION TABLE TO ENSURE SUFFICIENT INFORMATION FOR THE ABOUT SECTION
+    specs_df = pd.DataFrame({
+        "System Pipeline Layer": ["1. Intake Data Regularization", "2. Vector Processing Transformer", "3. Analytics Classifiers Sandbox", "4. Report Compiler Factory"],
+        "Operational Scope & Functional Target Goals": [
+            "Handles automated structural variable checks, field constraint bounds tracking, and error mitigation.",
+            "Normalizes multi-scale physiological patient vectors using standard variance transformations.",
+            "Executes concurrent evaluation of linear, tree, and ensemble classification architectures.",
+            "Assembles dynamic clinical records, evaluates the severity index tier, and serializes flat-file data exports."
+        ],
+        "Platform Dependencies": ["Python 3.11 / Streamlit Engine", "Scikit-Learn Preprocessing", "XGBoost Framework Module", "Matplotlib / Native Core Tables"]
+    })
+    st.table(specs_df)
