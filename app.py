@@ -13,83 +13,77 @@ import seaborn as sns
 
 st.set_page_config(page_title="CardioShield CDSS", layout="wide")
 
-# --- CUSTOM CSS FOR HIGH-VISIBILITY TYPOGRAPHY & BUTTONS ---
+# --- ADVANCED GLOBAL CSS FOR HIGH-VISIBILITY TYPOGRAPHY & BUTTONS ---
 st.markdown("""
     <style>
     /* Top Logo Typography */
     .nav-logo {
-        font-size: 34px !important;
+        font-size: 36px !important;
         font-weight: 800 !important;
         color: #0c5460 !important;
+        margin-bottom: 15px;
     }
     
     /* Enlarge and improve readability of titles on Home Page */
     .hero-title {
-        font-size: 46px !important;
+        font-size: 48px !important;
         font-weight: 800 !important;
         color: #1a3a4b !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 15px !important;
         line-height: 1.2 !important;
     }
     .hero-subtitle {
-        font-size: 28px !important;
+        font-size: 30px !important;
         font-weight: 700 !important;
         color: #0c5460 !important;
         margin-bottom: 25px !important;
     }
     .hero-body {
-        font-size: 22px !important;
-        line-height: 1.7 !important;
+        font-size: 23px !important;
+        line-height: 1.8 !important;
         color: #2b2b2b !important;
     }
     .hero-body ul li {
-        font-size: 21px !important;
-        margin-bottom: 8px !important;
+        font-size: 22px !important;
+        margin-bottom: 10px !important;
     }
     
-    /* Make Navigation Bar Header Buttons Highly Visible */
-    div[data-testid="stHorizontalBlock"] div.stButton > button {
-        background-color: #ffffff !important;
-        color: #0c5460 !important;
-        border: 3px solid #0c5460 !important;
+    /* Force Native Segmented Control to be Massive, Clean, and Professional */
+    div[data-testid="stSegmentedControl"] button {
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        padding: 12px 28px !important;
         border-radius: 8px !important;
-        padding: 12px 20px !important;
-        font-size: 20px !important;
-        font-weight: 800 !important;
-        width: 100% !important;
         min-height: 55px !important;
     }
-    div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
-        background-color: #0c5460 !important;
-        color: white !important;
-    }
-
-    /* Target Action Buttons at the Bottom of Pages (Non-navigation) */
-    .action-container div.stButton > button, 
-    .action-container div.stDownloadButton > button {
+    
+    /* Style Action Buttons at the Bottom of Pages (Non-navigation) */
+    div.stButton > button, 
+    div.stDownloadButton > button {
         background-color: #0c5460 !important;
         color: white !important;
         border-radius: 8px !important;
         border: none !important;
         padding: 16px 45px !important;
-        font-size: 22px !important;
+        font-size: 24px !important; /* Made the button font larger */
         font-weight: bold !important;
-        width: 320px !important; /* Fixed compact professional size */
-        min-height: 60px !important;
+        width: 350px !important; /* Explicit professional compact size */
+        min-height: 65px !important;
         display: block !important;
-        margin: 0 auto !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        margin: 20px auto !important; /* Centered with breathing room */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
     }
-    .action-container div.stButton > button:hover,
-    .action-container div.stDownloadButton > button:hover {
+    div.stButton > button:hover,
+    div.stDownloadButton > button:hover {
         background-color: #0a434d !important;
+        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # --- INITIALIZE STATE ---
 if "current_nav" not in st.session_state:
-    st.session_state.current_nav = "HOME"
+    st.session_state.current_nav = "🏠 HOME"
 if "patient_data" not in st.session_state:
     st.session_state.patient_data = None
 
@@ -111,35 +105,42 @@ try:
     X_test_scaled = scaler.transform(X_test)
 
     # ---------------------------------------------------------
-    # TOP WEB MENU NAVIGATION BAR (Tightened horizontal spacing)
+    # NEW UNIFIED TOP NAVIGATION BAR (No more huge column gaps)
     # ---------------------------------------------------------
-    col_logo, col_space, col_menu = st.columns([4, 1, 6])
+    col_logo, col_menu = st.columns([1, 2])
     
     with col_logo:
         st.markdown('<div class="nav-logo">🩺 CardioShield</div>', unsafe_allow_html=True)
         
     with col_menu:
-        nav_cols = st.columns(4)
-        if nav_cols[0].button("HOME", key="btn_nav_home"):
-            st.session_state.current_nav = "HOME"
-            st.rerun()
-        if nav_cols[1].button("INTAKE", key="btn_nav_intake"):
-            st.session_state.current_nav = "INTAKE"
-            st.rerun()
-        if nav_cols[2].button("MODELS", key="btn_nav_eval"):
-            st.session_state.current_nav = "EVALUATION"
-            st.rerun()
-        if nav_cols[3].button("REPORT", key="btn_nav_rep"):
-            st.session_state.current_nav = "REPORT"
+        # Segmented control joins options together, highlighting the active selection perfectly
+        nav_options = ["🏠 HOME", "📝 PATIENT INTAKE", "📊 MODEL EVALUATION", "📋 CLINICAL REPORT"]
+        
+        # If state doesn't match available options, reset gracefully
+        if st.session_state.current_nav not in nav_options:
+            if "HOME" in st.session_state.current_nav: st.session_state.current_nav = "🏠 HOME"
+            elif "INTAKE" in st.session_state.current_nav: st.session_state.current_nav = "📝 PATIENT INTAKE"
+            elif "EVALUATION" in st.session_state.current_nav: st.session_state.current_nav = "📊 MODEL EVALUATION"
+            elif "REPORT" in st.session_state.current_nav: st.session_state.current_nav = "📋 CLINICAL REPORT"
+
+        selected_nav = st.segmented_control(
+            label="Navigation Menu",
+            options=nav_options,
+            default=st.session_state.current_nav,
+            label_visibility="collapsed"
+        )
+        
+        if selected_nav and selected_nav != st.session_state.current_nav:
+            st.session_state.current_nav = selected_nav
             st.rerun()
 
     st.markdown("---")
 
     # ---------------------------------------------------------
-    # PAGE MODULE 1: IMPROVED HOME PAGE VIEW WITH RELEVANT HEART IMAGE
+    # PAGE MODULE 1: IMPROVED HOME PAGE VIEW
     # ---------------------------------------------------------
-    if st.session_state.current_nav == "HOME":
-        col_info, col_graphic = st.columns([4, 3])
+    if "HOME" in st.session_state.current_nav:
+        col_info, col_graphic = st.columns([11, 9])
         
         with col_info:
             st.markdown('<div class="hero-title">Welcome to the CardioShield Clinical Portal</div>', unsafe_allow_html=True)
@@ -159,21 +160,20 @@ try:
             </div>
             """, unsafe_allow_html=True)
             
-            st.markdown("<br><br>", unsafe_allow_html=True)
-            st.markdown('<div class="action-container">', unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Start Evaluation ➡️", key="home_start_btn"):
-                st.session_state.current_nav = "INTAKE"
+                st.session_state.current_nav = "📝 PATIENT INTAKE"
                 st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
                 
         with col_graphic:
-            # Replaced with an accurate, highly relevant cardiology diagnostic illustration vector
-            st.image("https://img.freepik.com/free-vector/cardiogram-concept-illustration_114360-17070.jpg", caption="Cardiovascular Pulse & Rhythm Diagnostics Monitor", use_container_width=True)
+            # Using a rock-solid open source placeholder illustration depicting clean diagnostic tracking
+            st.image("https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=600&q=80", 
+                     caption="Cardiovascular Rhythm & Diagnostic Monitoring", use_container_width=True)
 
     # ---------------------------------------------------------
     # PAGE MODULE 2: INTAKE FORM VIEW
     # ---------------------------------------------------------
-    elif st.session_state.current_nav == "INTAKE":
+    elif "INTAKE" in st.session_state.current_nav:
         st.subheader("Patient Administrative & Clinical Metrics Entry")
         
         col_id1, col_id2 = st.columns(2)
@@ -202,8 +202,6 @@ try:
             
         st.markdown("---")
         
-        # Highly visible, short action button container
-        st.markdown('<div class="action-container">', unsafe_allow_html=True)
         if st.button("Analyze Vitals ➡️", key="intake_process_btn"):
             st.session_state.patient_data = {
                 "patient_name": patient_name, "patient_id": patient_id,
@@ -212,14 +210,13 @@ try:
                 "platelets": platelets, "serum_creatinine": rose_creatinine, "serum_sodium": serum_sodium,
                 "sex": sex, "smoking": smoking, "time": time
             }
-            st.session_state.current_nav = "EVALUATION"
+            st.session_state.current_nav = "📊 MODEL EVALUATION"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # PAGE MODULE 3: MODEL EVALUATION DESK
     # ---------------------------------------------------------
-    elif st.session_state.current_nav == "EVALUATION":
+    elif "EVALUATION" in st.session_state.current_nav:
         st.subheader("Model Validation & Core Metrics Desk")
         
         st.info("⚙️ Developer Diagnostic Sandbox: Use this control selection panel to toggle different backend machine learning algorithms to showcase variant accuracy metrics and weights during evaluation benchmarking.")
@@ -262,17 +259,14 @@ try:
 
         st.markdown("---")
         
-        # Unified layout action button 
-        st.markdown('<div class="action-container">', unsafe_allow_html=True)
         if st.button("Generate Report 📋", key="eval_report_btn"):
-            st.session_state.current_nav = "REPORT"
+            st.session_state.current_nav = "📋 CLINICAL REPORT"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # PAGE MODULE 4: CLINICAL REPORT VIEW
     # ---------------------------------------------------------
-    elif st.session_state.current_nav == "REPORT":
+    elif "REPORT" in st.session_state.current_nav:
         st.subheader("Finalized Assessment & Dossier Export")
         if st.session_state.patient_data is None:
             st.warning("No dynamic medical records detected. Please fill out the Patient Intake page first.")
@@ -319,8 +313,6 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
 """
             st.markdown("---")
             
-            # Formatted export download button matching standard actions perfectly
-            st.markdown('<div class="action-container">', unsafe_allow_html=True)
             st.download_button(
                 label=f"📥 Download Report (.TXT)", 
                 data=report_data, 
@@ -328,7 +320,6 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
                 mime="text/plain",
                 key="download_report_btn"
             )
-            st.markdown('</div>', unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"System Initialization Interrupted: {e}")
