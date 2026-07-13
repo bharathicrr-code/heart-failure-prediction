@@ -30,24 +30,41 @@ st.markdown("""
         padding-top: 5px;
     }
     
-    /* MASK STREAMLIT RADIO TO LOOK LIKE CLEAN NAVBAR TEXT LINKS */
+    /* FORCE HIDING OF ALL NATIVE RADIO BUTTON CIRCLES AND ASSIGN CLEAN NAVIGATION TEXT LINKS */
+    div[data-testid="stRadio"] [data-testid="stWidgetLabel"] {
+        display: none !important;
+    }
     div[data-testid="stRadio"] > div {
         justify-content: flex-end !important;
-        gap: 45px !important;
+        gap: 40px !important;
     }
-    div[data-testid="stRadio"] label {
+    div[data-testid="stRadio"] label [data-testid="stMarkdownContainer"] p {
         font-size: 22px !important;
         font-weight: 700 !important;
         color: #555555 !important;
-        background: transparent !important;
-        border: none !important;
-        padding: 0px 0px 4px 0px !important;
-        cursor: pointer !important;
+        font-family: sans-serif !important;
     }
-    /* Native Active Indicator Hook */
-    div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {
-        font-size: 22px !important;
-        font-weight: 700 !important;
+    /* Hide the selection circles entirely */
+    div[data-testid="stRadio"] [data-checked] {
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+    div[data-testid="stRadio"] input[type="radio"] {
+        display: none !important;
+    }
+    div[data-testid="stRadio"] [data-testid="stCustomBorder"] {
+        display: none !important;
+    }
+    div[data-testid="stRadio"] label {
+        padding: 0px 0px 6px 0px !important;
+        border-bottom: 3px solid transparent !important;
+    }
+    /* Highlight the active link with an immediate matching highlight underline */
+    div[data-testid="stRadio"] div[role="radiogroup"] > div:has(input:checked) label {
+        border-bottom: 3px solid #0c5460 !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] > div:has(input:checked) p {
+        color: #0c5460 !important;
     }
     
     .hero-title {
@@ -72,24 +89,40 @@ st.markdown("""
         font-size: 22px !important;
         margin-bottom: 12px !important;
     }
+    
+    /* ENHANCED HIGH-VISIBILITY GLOBAL GLOBAL BUTTON OVERRIDES */
     div.stButton > button, 
     div.stDownloadButton > button {
         background-color: #0c5460 !important;
         color: white !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         border: none !important;
-        padding: 16px 40px !important;
+        padding: 18px 45px !important;
         font-size: 24px !important;
-        font-weight: 700 !important;
-        width: 380px !important;
-        min-height: 65px !important;
+        font-weight: 800 !important;
+        width: 100% !important;
+        max-width: 520px !important;
+        min-height: 75px !important;
         display: block !important;
         margin: 40px auto !important;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.12) !important;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.16) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        transition: all 0.2s ease !important;
     }
     div.stButton > button:hover,
     div.stDownloadButton > button:hover {
         background-color: #0a434d !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* CLINICAL REPORT SEVERITY CARD HOOKS */
+    .severity-card {
+        padding: 24px !important;
+        border-radius: 8px !important;
+        margin-bottom: 30px !important;
         color: white !important;
     }
     </style>
@@ -155,12 +188,10 @@ try:
         st.markdown('<div class="nav-logo">🩺 Heart Failure Prediction System</div>', unsafe_allow_html=True)
         
     with col_menu:
-        # Smooth native state radio selector acts as navbar
         nav_selection = st.radio(
             "",
             ["HOME", "FORM", "MODELS", "REPORT", "ABOUT"],
-            horizontal=True,
-            label_visibility="collapsed"
+            horizontal=True
         )
         st.session_state.current_nav = nav_selection
 
@@ -191,18 +222,18 @@ try:
             """, unsafe_allow_html=True)
             
             st.markdown("<br>", unsafe_allow_html=True)
-            # Home context button updates nav state without reloading page
             if st.button("Initialize Patient Entry Module ➡️", key="home_start_btn"):
                 st.session_state.current_nav = "FORM"
                 st.rerun()
                 
         with col_graphic:
+            # ENHANCED MULTI-PULSE WAVEFORM LOGIC
             st.markdown("""
-                <div style="background-color: transparent; text-align:center; padding-top:20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0c5460" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width:75%; max-width:275px;">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                <div style="background-color: transparent; text-align:center; padding-top:40px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" fill="none" stroke="#0c5460" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:95%;">
+                        <path d="M 10 75 L 70 75 L 85 45 L 100 105 L 115 15 L 130 85 L 145 75 L 210 75 L 225 45 L 240 105 L 255 15 L 270 85 L 285 75 L 350 75 L 365 45 L 380 105 L 395 15 L 410 85 L 425 75 L 490 75 L 505 45 L 520 105 L 535 15 L 550 85 L 590 75"/>
                     </svg>
-                    <p style="color:#555555; font-size:18px; font-weight:700; margin-top:25px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output</p>
+                    <p style="color:#555555; font-size:18px; font-weight:700; margin-top:35px; font-family:sans-serif; letter-spacing:1px;">Cardiovascular Diagnostics Engine Output</p>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -304,7 +335,7 @@ try:
                 st.success("Analysis calculation compiled successfully. Check the outputs generated inside the Reports module.")
 
     # ---------------------------------------------------------
-    # MODULE 5: REPORTS MODULE (REPORT)
+    # MODULE 5: REPORTS MODULE (REPORT WITH SEVERITY TRACKS)
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "REPORT":
         st.subheader("Reports Generation & Dossier Export Module")
@@ -320,16 +351,35 @@ try:
             
             prediction = st.session_state.model.predict(user_data_scaled)[0]
             prediction_proba = st.session_state.model.predict_proba(user_data_scaled)[0][1]
+            prob_percent = prediction_proba * 100
             
-            st.markdown("### Analytical Prediction Result Summary")
-            if prediction == 1:
-                st.error(f"⚠️ HIGH RISK CLINICAL STANDING DETECTED (Probability Indicator Index: {prediction_proba * 100:.1f}%)")
+            # DYNAMIC CLINICAL SEVERITY INDEX COMPILER
+            if prob_percent < 35.0:
+                severity_status = "LOW SYSTEMIC SEVERITY"
+                severity_color = "#28a745" # Emerald Green
+                severity_desc = "Clinical variables map within standard operating targets. Minimal structural deviation recorded."
+            elif 35.0 <= prob_percent < 65.0:
+                severity_status = "ELEVATED SEVERITY TIER (BORDERLINE)"
+                severity_color = "#ffc107" # Warning Amber
+                severity_desc = "Noticeable divergence identified across diagnostic indicators. Regularized outpatient surveillance recommended."
             else:
-                st.success(f"✅ CLEAR REGULAR HEALTH STANDING RATING (Probability Indicator Index: {prediction_proba * 100:.1f}%)")
+                severity_status = "CRITICAL HIGH RISK SEVERITY"
+                severity_color = "#dc3545" # Emergency Crimson
+                severity_desc = "Severe combination of high serum creatinine and depressed ejection metrics. Immediate clinical intervention advised."
+
+            st.markdown(f"""
+                <div class="severity-card" style="background-color: {severity_color}; color: { '#111111' if prob_percent < 35.0 or (35.0 <= prob_percent < 65.0) else 'white' };">
+                    <h3 style="margin:0px 0px 8px 0px; font-weight:800; font-size:26px;">📊 {severity_status}</h3>
+                    <p style="margin:0; font-size:19px; font-weight:600; opacity:0.95;">
+                        Measured Risk Scale Probability Index: {prob_percent:.1f}%<br>
+                        <b>Clinical Guideline:</b> {severity_desc}
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
                 
             metrics_display = {
-                "Monitored Attribute Field": ["Patient Registered Name", "Hospital Reference Tracking ID", "Evaluated Age Bracket", "Selected Algorithmic Engine", "Ejection Fraction Level Metric", "Serum Creatinine Density Value"],
-                "Assigned Patient Vector Values": [p['patient_name'], p['patient_id'], f"{p['age']} Years Old", f"{st.session_state.model_choice} Model", f"{p['ejection_fraction']}% Ratio", f"{p['serum_creatinine']} mg/dL"]
+                "Monitored Attribute Field": ["Patient Registered Name", "Hospital Reference Tracking ID", "Evaluated Age Bracket", "Selected Algorithmic Engine", "Risk Severity Index Classification", "Ejection Fraction Level Metric", "Serum Creatinine Density Value"],
+                "Assigned Patient Vector Values": [p['patient_name'], p['patient_id'], f"{p['age']} Years Old", f"{st.session_state.model_choice} Model", f"{prob_percent:.1f}% ({severity_status})", f"{p['ejection_fraction']}% Ratio", f"{p['serum_creatinine']} mg/dL"]
             }
             st.table(pd.DataFrame(metrics_display))
 
@@ -345,13 +395,14 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
 * Operational Dataset Test Accuracy: {st.session_state.accuracy*100:.2f}%
 ======================================================
 [PREDICTIVE ANALYTIC DIAGNOSTIC RESULT]
-* Stratification Code: {'HIGH RISK EVALUATION WARNING' if prediction == 1 else 'CLEAR STATUS CONFIRMED'}
-* Measured Probability Target Index: {prediction_proba * 100:.1f}%
+* Severity Tier Status: {severity_status}
+* Measured Probability Target Index: {prob_percent:.1f}%
+* Clinical Assessment Note: {severity_desc}
 ======================================================
 """
             st.markdown("---")
             st.download_button(
-                label=f"📥 Download Patient Dossier File (.TXT)", 
+                label=f"📥 Download Clinical Dossier File (.TXT)", 
                 data=report_data, 
                 file_name=f"Clinical_System_Report_{p['patient_id']}.txt", 
                 mime="text/plain",
