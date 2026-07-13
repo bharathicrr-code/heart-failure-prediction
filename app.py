@@ -13,16 +13,65 @@ import seaborn as sns
 
 st.set_page_config(page_title="CardioShield CDSS", layout="wide")
 
-# --- CUSTOM CSS FOR CLASSIC WEB NAVIGATION HEADER ---
+# --- CUSTOM CSS FOR UNIFIED CUSTOM COMPONENT COLORING & SHORT BUTTONS ---
 st.markdown("""
     <style>
     .nav-logo {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: bold;
         color: #0c5460;
     }
-    div.stButton > button:first-child {
-        font-weight: bold;
+    /* Enlarge and improve readability of titles on Home Page */
+    .hero-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #1a3a4b;
+        margin-bottom: 5px;
+    }
+    .hero-subtitle {
+        font-size: 24px;
+        font-weight: 600;
+        color: #0c5460;
+        margin-bottom: 20px;
+    }
+    .hero-body {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #333333;
+    }
+    /* Target regular Streamlit buttons to ensure they look uniform, short, and official teal blue */
+    div.stButton > button {
+        background-color: #0c5460 !important;
+        color: white !important;
+        border-radius: 6px !important;
+        border: none !important;
+        padding: 8px 24px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        width: auto !important; /* Forces buttons to stay short */
+        display: block;
+        margin: 0 auto; /* Centers the button rows nicely */
+    }
+    div.stButton > button:hover {
+        background-color: #0a434d !important;
+        color: white !important;
+    }
+    /* Format file downloader button to look identical to standard buttons */
+    div.stDownloadButton > button {
+        background-color: #0c5460 !important;
+        color: white !important;
+        border-radius: 6px !important;
+        border: none !important;
+        padding: 8px 24px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        width: auto !important;
+        display: block;
+        margin: 0 auto;
+    }
+    div.stDownloadButton > button:hover {
+        background-color: #0a434d !important;
+        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -60,46 +109,56 @@ try:
         
     with col_menu:
         nav_cols = st.columns(4)
-        # Highlight active page style using standard buttons
-        if nav_cols[0].button("HOME", use_container_width=True):
+        if nav_cols[0].button("HOME", key="btn_nav_home"):
             st.session_state.current_nav = "HOME"
             st.rerun()
-        if nav_cols[1].button("PATIENT INTAKE", use_container_width=True):
+        if nav_cols[1].button("PATIENT INTAKE", key="btn_nav_intake"):
             st.session_state.current_nav = "INTAKE"
             st.rerun()
-        if nav_cols[2].button("MODEL EVALUATION", use_container_width=True):
+        if nav_cols[2].button("MODEL EVALUATION", key="btn_nav_eval"):
             st.session_state.current_nav = "EVALUATION"
             st.rerun()
-        if nav_cols[3].button("CLINICAL REPORT", use_container_width=True):
+        if nav_cols[3].button("CLINICAL REPORT", key="btn_nav_rep"):
             st.session_state.current_nav = "REPORT"
             st.rerun()
 
     st.markdown("---")
 
     # ---------------------------------------------------------
-    # PAGE MODULE 1: HOME PAGE VIEW
+    # PAGE MODULE 1: IMPROVED HOME PAGE VIEW WITH IMAGE
     # ---------------------------------------------------------
     if st.session_state.current_nav == "HOME":
-        st.subheader("Welcome to the CardioShield Clinical Portal")
+        col_info, col_graphic = st.columns([4, 3])
         
-        col_info, col_graphic = st.columns([3, 2])
         with col_info:
-            st.markdown("""
-            ### About CardioShield CDSS
-            An advanced Clinical Decision Support System built to assist medical practitioners 
-            in evaluating heart failure probabilities dynamically using machine learning pipelines.
+            st.markdown('<div class="hero-title">Welcome to the CardioShield Clinical Portal</div>', unsafe_allow_html=True)
+            st.markdown('<div class="hero-subtitle">Next-Generation Clinical Decision Support System (CDSS)</div>', unsafe_allow_html=True)
             
-            * **Objective:** Modernizing preventative cardiovascular analytics.
-            * **Methodology:** Processing 12 patient features against ensemble models.
-            """)
-            if st.button("Start New Patient Evaluation ➡️"):
+            st.markdown("""
+            <div class="hero-body">
+            CardioShield leverages machine learning pipelines to assist healthcare professionals with objective risk stratification. 
+            By processing key clinical indicators synchronously, the engine outputs predictive insights to catch signs of advanced heart failure early.
+            <br><br>
+            <b>Key Architecture Pillars:</b>
+            <ul>
+                <li><b>High Accuracy:</b> Optimized metrics utilizing ensemble learning algorithms.</li>
+                <li><b>Comprehensive Vectors:</b> Cross-references 12 critical biological indicators including serum metrics and cardiovascular history.</li>
+                <li><b>Instant Dossier Generation:</b> Formulates downloadable diagnostic insights instantly.</li>
+            </ul>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("Start New Patient Evaluation ➡️", key="home_start_btn"):
                 st.session_state.current_nav = "INTAKE"
                 st.rerun()
+                
         with col_graphic:
-            st.info("💡 **System Core Active:** Pipeline loaded with baseline clinical records successfully.")
+            # Displays an elegant clinical graphic vector asset directly alongside the text block
+            st.image("https://img.freepik.com/free-vector/human-internal-organ-with-heart_1308-103328.jpg", caption="Cardiovascular Metrics Mapping Interface", use_container_width=True)
 
     # ---------------------------------------------------------
-    # PAGE MODULE 2: INTAKE FORM VIEW
+    # PAGE MODULE 2: INTAKE FORM VIEW (SHORT BUTTON, NO RED BAR)
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "INTAKE":
         st.subheader("Patient Administrative & Clinical Metrics Entry")
@@ -129,8 +188,10 @@ try:
             time = st.slider("Follow-up Window (Days)", int(df['time'].min()), int(df['time'].max()), 100)
             
         st.markdown("---")
-        # Catchy Premium Button and Automatic Page Transition
-        if st.button("Analyze Patient Vitals ➡️", type="primary", use_container_width=True):
+        
+        # Centered, short button without full width or red warning blocks
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        if st.button("Analyze Patient Vitals ➡️", key="intake_process_btn"):
             st.session_state.patient_data = {
                 "patient_name": patient_name, "patient_id": patient_id,
                 "age": age, "anaemia": anaemia, "creatinine_phosphokinase": creatinine_phosphokinase,
@@ -140,12 +201,17 @@ try:
             }
             st.session_state.current_nav = "EVALUATION"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------------------------------------------------------
-    # PAGE MODULE 3: MODEL EVALUATION DESK
+    # PAGE MODULE 3: MODEL EVALUATION DESK (PROJECT DEMO CONTEXT)
     # ---------------------------------------------------------
     elif st.session_state.current_nav == "EVALUATION":
         st.subheader("Model Validation & Core Metrics Desk")
+        
+        # Informative note explicitly framing this page for presentation/evaluation execution
+        st.info("⚙️ **Developer Diagnostic Sandbox:** Use this control selection panel to toggle different backend machine learning algorithms to showcase variant accuracy metrics and weights during evaluation benchmarking.")
+        
         model_choice = st.selectbox("Select Active Analytics Backbone Engine", ["Random Forest", "Logistic Regression", "XGBoost", "Decision Tree", "SVM"])
         
         if model_choice == "Logistic Regression":
@@ -183,10 +249,13 @@ try:
         st.session_state.feature_names = feature_names
 
         st.markdown("---")
-        # Automatic transition button to skip manual header navigation
-        if st.button("Generate Official Report 📋", type="primary", use_container_width=True):
+        
+        # Centered short button matching the layout style perfectly
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        if st.button("Generate Official Report 📋", key="eval_report_btn"):
             st.session_state.current_nav = "REPORT"
             st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # PAGE MODULE 4: CLINICAL REPORT VIEW
@@ -237,14 +306,17 @@ HEART FAILURE CLINICAL ASSESSMENT DOSSIER
 ======================================================
 """
             st.markdown("---")
-            # Dedicated clear download trigger at the bottom of the report page
+            
+            # Short custom themed export button centered correctly
+            st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
             st.download_button(
-                label=f"📥 Download Report for {p['patient_name']} (.TXT)", 
+                label=f"📥 Download Report (.TXT)", 
                 data=report_data, 
                 file_name=f"Clinical_Report_{p['patient_id']}.txt", 
                 mime="text/plain",
-                use_container_width=True
+                key="download_report_btn"
             )
+            st.markdown("</div>", unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"System Initialization Interrupted: {e}")
