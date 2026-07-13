@@ -273,6 +273,35 @@ try:
             st.session_state.current_nav = "EVALUATION"
             st.rerun()
 
+# --- MACHINE LEARNING DATA LOGIC ACCELERATOR ---
+@st.cache_data
+def load_data():
+    import os
+    file_path = "heart_failure_clinical_records_dataset.csv"
+    if not os.path.exists(file_path):
+        return None
+    return pd.read_csv(file_path)
+
+# Safe initial data check to prevent Streamlit Cloud environment crashes
+df = load_data()
+
+if df is None:
+    st.error("📥 **Missing Component:** 'heart_failure_clinical_records_dataset.csv' was not found in your GitHub repository root folder.")
+    st.info("Please upload the dataset CSV file to your repository so the prediction systems can initialize properly.")
+    st.stop()
+else:
+    # Process dataset inputs safely if file is present
+    X = df.drop(columns=['DEATH_EVENT'])
+    y = df['DEATH_EVENT']
+    feature_names = X.columns.tolist()
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # ... [Keep your Login Module, Home, and Intake Form modules exactly as they are here] ...
+
     # ---------------------------------------------------------
     # MODULE 4: PREDICTION MODULE
     # ---------------------------------------------------------
@@ -309,7 +338,7 @@ try:
             feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
             fig, ax = plt.subplots(figsize=(10, 3.5))
             
-            # This completely fixes the modern Seaborn compatibility crash
+            # Cleaned plotting syntax to bypass the Seaborn warning completely
             sns.barplot(
                 x='Weight Importance', 
                 y='Feature Vector', 
