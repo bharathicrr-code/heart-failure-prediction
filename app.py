@@ -17,13 +17,13 @@ st.set_page_config(page_title="Heart Failure Prediction System", layout="wide")
 # --- GLOBAL FORCED HIGH-READABILITY INTERFACE CSS ---
 st.markdown("""
     <style>
-    /* Premium Page Optimization & Padding Management */
+    /* Remove unnecessary viewport padding offsets */
     .block-container {
         padding-top: 1.5rem !important;
         padding-bottom: 3rem !important;
     }
 
-    /* 1. GLOBAL HIGH-READABILITY TYPOGRAPHY PERFECTION */
+    /* 1. GLOBAL TYPOGRAPHY STANDARDS */
     html, body, [data-testid="stWidgetLabel"] p, .stSelectbox div, .stTextInput input, div[data-baseweb="select"] * {
         font-size: 24px !important;
         font-weight: 600 !important;
@@ -31,13 +31,53 @@ st.markdown("""
     }
     
     .stTextInput input, div[data-testid="stSelectbox-Trigger"] {
-        min-height: 55px !important;
+        min-height: 52px !important;
         background-color: #ffffff !important;
         border: 2px solid #ced4da !important;
         border-radius: 6px !important;
     }
+
+    /* 2. COMPACT, GMAIL-INSPIRED COMPACT LOGIN CONTAINER CARD */
+    div[data-testid="stForm"] {
+        background-color: #ffffff !important;
+        padding: 40px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid #e2e8f0 !important;
+        max-width: 480px !important;
+        margin: 40px auto !important;
+    }
     
-    /* 2. SYSTEM DATA TABLES DESIGN SPECIFICATION */
+    /* 3. SHRINK STREAMLIT'S WIDE PASSWORD VISIBILITY ICON BUTTON (GMAIL-STYLE) */
+    div[data-testid="stForm"] button[aria-label="Show password"] {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #6c757d !important;
+        width: auto !important;
+        min-width: auto !important;
+        margin: 0 !important;
+        padding: 0 10px !important;
+    }
+    
+    /* 4. EXECUTIVE CENTERING CORE RULES FOR FORM INTERFACE BUTTONS */
+    div[data-testid="stForm"] button[type="submit"], div.stButton > button, div.stDownloadButton > button {
+        background-color: #0c5460 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 12px 32px !important;
+        font-size: 22px !important;
+        font-weight: 700 !important;
+        width: auto !important;
+        min-width: 200px !important;
+        display: block !important;
+        margin: 25px auto 0 auto !important;
+        box-shadow: 0 4px 12px rgba(12, 84, 96, 0.15) !important;
+        border: none !important;
+        text-transform: uppercase !important;
+    }
+
+    /* 5. DATA EVALUATION MATRIX STRUCTURING */
     [data-testid="stTable"] table {
         width: 100% !important;
         border-collapse: collapse !important;
@@ -49,52 +89,20 @@ st.markdown("""
         font-size: 24px !important;
         font-weight: 700 !important;
         padding: 18px !important;
-        text-align: left !important;
     }
     [data-testid="stTable"] td {
         font-size: 22px !important;
-        font-weight: 500 !important;
         color: #2b2b2b !important;
         padding: 16px !important;
         border-bottom: 1px solid #dee2e6 !important;
     }
-
-    /* 3. CLASSY, CENTERED CARD PATTERN FOR THE LOGIN PORTAL */
-    .login-container {
-        background-color: #ffffff;
-        padding: 45px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e9ecef;
-        max-width: 550px;
-        margin: 40px auto !important;
-    }
     
-    /* 4. EXECUTIVE APP BUTTON ACTIONS */
-    div.stButton > button, div.stDownloadButton > button, div.stForm submit_button, div[data-testid="stForm"] button {
-        background-color: #0c5460 !important;
-        color: white !important;
-        border-radius: 8px !important;
-        padding: 14px 36px !important;
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        width: auto !important;
-        min-width: 240px !important;
-        display: block !important;
-        margin: 30px auto !important;
-        box-shadow: 0 4px 12px rgba(12, 84, 96, 0.2) !important;
-        border: none !important;
-        transition: all 0.2s ease;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px;
-    }
-    
-    /* Typography Cleanliness Rules */
+    /* TYPOGRAPHY CORES */
     .hero-title { font-size: 44px !important; font-weight: 800; color: #1a3a4b; margin-bottom: 10px; }
     .hero-subtitle { font-size: 28px !important; font-weight: 600; color: #0c5460; margin-bottom: 25px; }
     .hero-body { font-size: 24px !important; line-height: 1.7 !important; color: #333333; }
     
-    /* REPORT STATUS TIERS */
+    /* CLINICAL OUTCOME TIERS */
     .assessment-box-safe { background-color: #28a745 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
     .assessment-box-borderline { background-color: #fd7e14 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
     .assessment-box-severe { background-color: #dc3545 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
@@ -114,20 +122,13 @@ if "patient_data" not in st.session_state:
 
 # --- AUTHENTICATION GATEWAY ---
 if not st.session_state.logged_in:
-    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
     
-    # Styled clean HTML architecture wrapper card block for a luxury presentation
-    st.markdown("""
-        <div class="login-container">
-            <h2 style="text-align: center; color: #1a3a4b; font-size: 36px; margin-top: 0; font-weight: 800;">🔒 Login Page</h2>
-            <p style="text-align: center; color: #6c757d; font-size: 18px; margin-bottom: 30px;">Please authenticate your clinical credentials to access patient dashboards.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # Render fields strictly within a clean, centered interface column grid split
-    col_l1, col_l2, col_l3 = st.columns([1.2, 2, 1.2])
+    # Render fields strictly within a clean, centered interface card column format
+    col_l1, col_l2, col_l3 = st.columns([1.5, 2, 1.5])
     with col_l2:
         with st.form("login_form", clear_on_submit=False):
+            st.markdown("<h2 style='text-align: center; color: #1a3a4b; font-size: 34px; margin-top: 0; margin-bottom: 30px; font-weight: 800;'>🔒 Login Page</h2>", unsafe_allow_html=True)
             username = st.text_input("Username / Clinician Identification Badge Key", value="admin")
             password = st.text_input("Secure Password Access Key", type="password", value="password")
             submit_login = st.form_submit_button("LOGIN")
@@ -149,7 +150,7 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# --- NAVIGATION HEADER NAVBAR (CLEAN HEADER PLACEMENT) ---
+# --- NAVIGATION HEADER NAVBAR ---
 st.markdown("""
     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-bottom: 4px solid #0c5460;">
         <h2 style="margin:0; color: #1a3a4b; font-weight: 800;">🩺 Heart Failure Prediction System</h2>
@@ -168,12 +169,12 @@ with col_n4:
 with col_n5:
     if st.button("ℹ️ SYSTEM HELP", key="nav_about", use_container_width=True): st.session_state.current_nav = "ABOUT"; st.rerun()
 
-# --- MODULE 1: HOME VIEW (WELL-STRUCTURED & SYMMETRICAL) ---
+# --- MODULE 1: HOME VIEW ---
 if st.session_state.current_nav == "HOME":
     st.markdown('<div class="hero-title" style="text-align: center; margin-top: 15px;">Heart Failure Prediction System</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-subtitle" style="text-align: center;">Decision Support Engine Deployment Platform</div>', unsafe_allow_html=True)
     
-    # Original ECG heartbeat line metric visual perfectly re-centered
+    # Original centered telemetry heartbeat asset alignment mapping
     st.markdown("""
         <div style="text-align:center; padding: 20px 0;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" fill="none" stroke="#0c5460" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 45%; max-width: 450px; margin: 0 auto;">
@@ -254,7 +255,6 @@ elif st.session_state.current_nav == "MODELS":
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
     feat_imp_df = pd.DataFrame({'Feature Vector': feature_names, 'Weight Importance': importance_values}).sort_values(by='Weight Importance', ascending=False)
     
-    # REVERSED COLOR SCHEME AND COMPACT CONTAINER ADJUSTMENT
     fig, ax = plt.subplots(figsize=(6, 2.5))
     sns.barplot(x='Weight Importance', y='Feature Vector', data=feat_imp_df, palette='viridis_r', hue='Feature Vector', legend=False, ax=ax)
     ax.tick_params(labelsize=8)
@@ -303,12 +303,11 @@ elif st.session_state.current_nav == "REPORT":
         csv_data = report_df.to_csv(index=False).encode('utf-8')
         st.download_button(label="📥 DOWNLOAD PATIENT EVALUATION REPORT", data=csv_data, file_name=f"Clinical_Report_{p['patient_id']}.csv", mime="text/csv")
 
-# --- MODULE 5: SYSTEM HELP (EXAMINER-FRIENDLY & EASY TO EXPLAIN) ---
+# --- MODULE 5: SYSTEM HELP ---
 elif st.session_state.current_nav == "ABOUT":
     st.markdown("<h2 style='color: #1a3a4b;'>ℹ️ Project Presentation Help Desk</h2>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 22px; color: #555; margin-bottom: 25px;'>Use this architectural mapping table to easily explain the system pipeline flow and model scope stages directly to your evaluation examiners.</p>", unsafe_allow_html=True)
     
-    # Highly impactful, easy-to-explain dataset tailored for examiner reviews
     presentation_help_data = {
         "Core Project Lifecycle Stage": [
             "1. Clinical Ingestion Pipeline", 
@@ -329,6 +328,4 @@ elif st.session_state.current_nav == "ABOUT":
     }
     
     st.table(pd.DataFrame(presentation_help_data))
-    
-    # STRUCTURAL VIEWPORT ACCESSIBILITY FIX: Explicit structural spacing cushion to protect table readability from screen cutoff
     st.markdown("<div style='margin-bottom: 250px; height: 250px; display: block;'></div>", unsafe_allow_html=True)
