@@ -16,20 +16,13 @@ st.set_page_config(page_title="CardioShield CDSS", layout="wide")
 # --- CUSTOM CSS FOR CLASSIC WEB NAVIGATION HEADER ---
 st.markdown("""
     <style>
-    .nav-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #f8f9fa;
-        padding: 10px 20px;
-        border-radius: 8px;
-        margin-bottom: 25px;
-        border-bottom: 2px solid #e9ecef;
-    }
     .nav-logo {
         font-size: 24px;
         font-weight: bold;
         color: #0c5460;
+    }
+    div.stButton > button:first-child {
+        font-weight: bold;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -58,7 +51,7 @@ try:
     X_test_scaled = scaler.transform(X_test)
 
     # ---------------------------------------------------------
-    # TOP WEB MENU NAVIGATION BAR (Matches Classmate's Structure)
+    # TOP WEB MENU NAVIGATION BAR
     # ---------------------------------------------------------
     col_logo, col_menu = st.columns([1, 2])
     
@@ -66,16 +59,20 @@ try:
         st.markdown('<div class="nav-logo">🩺 CardioShield</div>', unsafe_allow_html=True)
         
     with col_menu:
-        # Horizontal button array mimicking top HTML navbar links
         nav_cols = st.columns(4)
+        # Highlight active page style using standard buttons
         if nav_cols[0].button("HOME", use_container_width=True):
             st.session_state.current_nav = "HOME"
+            st.rerun()
         if nav_cols[1].button("PATIENT INTAKE", use_container_width=True):
             st.session_state.current_nav = "INTAKE"
+            st.rerun()
         if nav_cols[2].button("MODEL EVALUATION", use_container_width=True):
             st.session_state.current_nav = "EVALUATION"
+            st.rerun()
         if nav_cols[3].button("CLINICAL REPORT", use_container_width=True):
             st.session_state.current_nav = "REPORT"
+            st.rerun()
 
     st.markdown("---")
 
@@ -94,10 +91,11 @@ try:
             
             * **Objective:** Modernizing preventative cardiovascular analytics.
             * **Methodology:** Processing 12 patient features against ensemble models.
-            * **Navigation:** Click **PATIENT INTAKE** above to start analyzing a case.
             """)
+            if st.button("Start New Patient Evaluation ➡️"):
+                st.session_state.current_nav = "INTAKE"
+                st.rerun()
         with col_graphic:
-            # A clean placeholder box for system status or promotional image
             st.info("💡 **System Core Active:** Pipeline loaded with baseline clinical records successfully.")
 
     # ---------------------------------------------------------
@@ -130,7 +128,9 @@ try:
             smoking = st.selectbox("Smoking Profile", [0, 1], format_func=lambda x: "Non-smoker" if x==0 else "Active Smoker")
             time = st.slider("Follow-up Window (Days)", int(df['time'].min()), int(df['time'].max()), 100)
             
-        if st.button("Process Clinical Vitals Vector"):
+        st.markdown("---")
+        # Catchy Premium Button and Automatic Page Transition
+        if st.button("Analyze Patient Vitals ➡️", type="primary", use_container_width=True):
             st.session_state.patient_data = {
                 "patient_name": patient_name, "patient_id": patient_id,
                 "age": age, "anaemia": anaemia, "creatinine_phosphokinase": creatinine_phosphokinase,
@@ -138,7 +138,8 @@ try:
                 "platelets": platelets, "serum_creatinine": serum_creatinine, "serum_sodium": serum_sodium,
                 "sex": sex, "smoking": smoking, "time": time
             }
-            st.success(f"Vitals mapped for {patient_name}! Proceed to the MODEL EVALUATION page.")
+            st.session_state.current_nav = "EVALUATION"
+            st.rerun()
 
     # ---------------------------------------------------------
     # PAGE MODULE 3: MODEL EVALUATION DESK
@@ -181,6 +182,12 @@ try:
         st.session_state.scaler = scaler
         st.session_state.feature_names = feature_names
 
+        st.markdown("---")
+        # Automatic transition button to skip manual header navigation
+        if st.button("Generate Official Report 📋", type="primary", use_container_width=True):
+            st.session_state.current_nav = "REPORT"
+            st.rerun()
+
     # ---------------------------------------------------------
     # PAGE MODULE 4: CLINICAL REPORT VIEW
     # ---------------------------------------------------------
@@ -216,6 +223,28 @@ try:
                 "Assigned Vector": [p['patient_name'], p['patient_id'], f"{p['age']} Years", "Male" if p['sex'] == 1 else "Female", f"{p['ejection_fraction']}%", f"{p['serum_creatinine']} mg/dL"]
             }
             st.table(pd.DataFrame(metrics_display))
+
+            report_data = f"""======================================================
+HEART FAILURE CLINICAL ASSESSMENT DOSSIER
+======================================================
+[PATIENT DEMOGRAPHICS]
+* Patient Name: {p['patient_name']}
+* Hospital ID Reference: {p['patient_id']}
+
+[SYSTEM ARCHITECTURE SUMMARY]
+* Model Backbone Used: {st.session_state.model_choice}
+* Baseline General Testing Accuracy: {st.session_state.accuracy*100:.2f}%
+======================================================
+"""
+            st.markdown("---")
+            # Dedicated clear download trigger at the bottom of the report page
+            st.download_button(
+                label=f"📥 Download Report for {p['patient_name']} (.TXT)", 
+                data=report_data, 
+                file_name=f"Clinical_Report_{p['patient_id']}.txt", 
+                mime="text/plain",
+                use_container_width=True
+            )
 
 except Exception as e:
     st.error(f"System Initialization Interrupted: {e}")
