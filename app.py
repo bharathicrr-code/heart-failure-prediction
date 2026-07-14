@@ -35,7 +35,7 @@ st.markdown("""
     .mod-risk { border-left-color: #f59e0b; background-color: #fffbeb; }
     .high-risk { border-left-color: #ef4444; background-color: #fef2f2; }
 </style>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
 
 # --- HARDCODED BACKEND LOGIC (PRESERVING WORKFLOW) ---
 @st.cache_data
@@ -155,7 +155,7 @@ elif st.session_state['current_page'] == "Patient Clinical Information":
             high_blood_pressure = st.selectbox("High Blood Pressure (Hypertension History)", ["No", "Yes"])
             platelets = st.number_input("Platelet Count (kiloplatelets/mL)", min_value=1000, max_value=1000000, value=250000, step=1000)
             serum_creatinine = st.number_input("Serum Creatinine Level (mg/dL)", min_value=0.1, max_value=15.0, value=1.2, step=0.1)
-            serum_sodium = st.number_input("Serum Sodium Level (mEq/L)", min_value=100, max_value=160, value=135)
+            rose_sodium = st.number_input("Serum Sodium Level (mEq/L)", min_value=100, max_value=160, value=135)
             sex = st.selectbox("Gender", ["Female", "Male"])
             smoking = st.selectbox("Smoking Status", ["No", "Yes"])
             time = st.number_input("Follow-up Period (Days)", min_value=1, max_value=365, value=150)
@@ -174,7 +174,7 @@ elif st.session_state['current_page'] == "Patient Clinical Information":
             patient_df = pd.DataFrame([{
                 'age': age, 'anaemia': anaemia_val, 'creatinine_phosphokinase': creatinine_phosphokinase,
                 'diabetes': diabetes_val, 'ejection_fraction': ejection_fraction, 'high_blood_pressure': hbp_val,
-                'platelets': platelets, 'serum_creatinine': serum_creatinine, 'serum_sodium': serum_sodium,
+                'platelets': platelets, 'serum_creatinine': serum_creatinine, 'serum_sodium': rose_sodium,
                 'sex': sex_val, 'smoking': smoking_val, 'time': time
             }])
             
@@ -185,7 +185,7 @@ elif st.session_state['current_page'] == "Patient Clinical Information":
                 'display': {
                     'Age': age, 'Anaemia': anaemia, 'CPK Level': creatinine_phosphokinase, 'Diabetes': diabetes,
                     'Ejection Fraction': ejection_fraction, 'High Blood Pressure': high_blood_pressure,
-                    'Platelet Count': platelets, 'Serum Creatinine': serum_creatinine, 'Serum Sodium': serum_sodium,
+                    'Platelet Count': platelets, 'Serum Creatinine': serum_creatinine, 'Serum Sodium': rose_sodium,
                     'Gender': sex, 'Smoking': smoking, 'Follow-up Period': time
                 }
             }
@@ -284,7 +284,7 @@ elif st.session_state['current_page'] == "Machine Learning Model Performance Ana
     st.write("The chart below illustrates how heavily the underlying primary model weights each biological feature during evaluation.")
     
     # Calculate and display feature importance using primary model to keep graph active
-    importances = primary_model.feature_importances__
+    importances = primary_model.feature_importances_
     indices = np.argsort(importances)[::-1]
     sorted_features = [feature_names[i] for i in indices]
     sorted_importances = importances[indices]
