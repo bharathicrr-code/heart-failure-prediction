@@ -118,7 +118,7 @@ st.markdown("""
     
     /* CLINICAL OUTCOME TIERS */
     .assessment-box-safe { background-color: #28a745 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
-    .assessment-box-borderline { background-color: #fd7e14 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
+    .assessment-box-borderline { background-color: #ffb300 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: #1a3a4b !important; }
     .assessment-box-severe { background-color: #dc3545 !important; padding: 35px; border-radius: 12px; margin-bottom: 35px; color: white !important; }
     </style>
 """, unsafe_allow_html=True)
@@ -198,11 +198,11 @@ if st.session_state.current_nav == "HOME":
         By leveraging validated machine learning models trained on historical clinical datasets, this system analyzes key survival metrics, patient medical history, and lab results. 
         CardioShield provides actionable risk stratification and predictive insights to help clinical teams optimize personalized care plans and follow-up strategies.
         <br><br>
-        <b style="font-size: 24px; color: #1a3a4b;">Key System Design Pillars:</b>
+        <b style="font-size: 24px; color: #1a3a4b;">System Features:</b>
         <ul style="margin-top: 10px; padding-left: 20px; font-size: 22px;">
-            <li><b>Real-Time Analytics:</b> Immediate processing and evaluation of patient metrics.</li>
-            <li><b>Validated Model Performance:</b> Implements benchmarks across multiple machine learning models.</li>
-            <li><b>Secure User Authentication:</b> Access control to safely manage patient records.</li>
+            <li><b>Real-Time Patient Analysis</b> – Processes patient clinical information for immediate risk evaluation.</li>
+            <li><b>Validated Machine Learning Models</b> – Uses multiple machine learning algorithms for accurate heart failure prediction.</li>
+            <li><b>Secure User Authentication</b> – Protects patient records through authenticated system access.</li>
         </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -247,7 +247,7 @@ elif st.session_state.current_nav == "FORM":
         smoking = st.selectbox("Smoking Status", [0, 1], format_func=lambda x: "No" if x==0 else "Yes")
         time = st.slider("Follow-up Period (Days)", int(df['time'].min()), int(df['time'].max()), 120)
         
-    if st.button("Generate Prediction", key="intake_process_btn"):
+    if st.button("Predict Heart Failure Risk", key="intake_process_btn"):
         st.session_state.patient_data = {
             "patient_name": patient_name, "patient_id": patient_id, "age": age, "anaemia": anaemia, 
             "creatinine_phosphokinase": creatinine_phosphokinase, "diabetes": diabetes, "ejection_fraction": ejection_fraction, 
@@ -272,18 +272,45 @@ elif st.session_state.current_nav == "MODELS":
     
     st.subheader("Validated Model Accuracy")
     
-    # Display fixed validation accuracies requested from the dissertation
-    metrics_data = {
-        "Classifier Algorithm": [
-            "Random Forest", 
-            "Logistic Regression", 
-            "XGBoost", 
-            "Support Vector Machine", 
-            "Decision Tree"
-        ],
-        "Validation Set Accuracy": ["83.33%", "81.67%", "81.67%", "76.67%", "73.33%"]
-    }
-    st.table(pd.DataFrame(metrics_data))
+    # Custom HTML Table to cleanly support interactive highlighted rows match selection rules
+    html_table = """
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background-color: #0c5460; color: white;">
+                <th style="font-size: 24px; font-weight: 700; padding: 18px; text-align: left;">Classifier Algorithm</th>
+                <th style="font-size: 24px; font-weight: 700; padding: 18px; text-align: left;">Validation Set Accuracy</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    
+    algorithms = [
+        ("Random Forest", "83.33%", "Random Forest" in model_choice),
+        ("Logistic Regression", "81.67%", "Logistic Regression" in model_choice),
+        ("XGBoost", "81.67%", "XGBoost" in model_choice),
+        ("Support Vector Machine", "76.67%", "Support Vector Machine" in model_choice or "SVM" in model_choice),
+        ("Decision Tree", "73.33%", "Decision Tree" in model_choice)
+    ]
+    
+    for algo, acc, is_selected in algorithms:
+        style = "border-bottom: 1px solid #dee2e6;"
+        if is_selected:
+            if algo == "Random Forest":
+                # Special Green Highlight for Random Forest selection
+                style += " background-color: #d4edda !important; font-weight: bold; border-left: 6px solid #28a745;"
+            else:
+                # Standard active selection highlight
+                style += " background-color: #e2e8f0 !important; font-weight: bold; border-left: 6px solid #0c5460;"
+        
+        html_table += f"""
+            <tr style="{style}">
+                <td style="font-size: 22px; color: #2b2b2b; padding: 16px;">{algo}</td>
+                <td style="font-size: 22px; color: #2b2b2b; padding: 16px;">{acc}</td>
+            </tr>
+        """
+        
+    html_table += "</tbody></table>"
+    st.markdown(html_table, unsafe_allow_html=True)
     st.caption("Accuracy obtained during the final Google Colab evaluation and reported in the dissertation.")
     
     importance_values = model.feature_importances_ if hasattr(model, 'feature_importances_') else np.abs(model.coef_[0])
@@ -322,8 +349,8 @@ elif st.session_state.current_nav == "REPORT":
 
         st.markdown(f"""
             <div class="{box_class}">
-                <h2 style="color: white !important; margin:0; font-size:36px;">📝 Prediction Result: {severity_status}</h2>
-                <p style="color: white !important; font-size:26px; margin:5px 0 0 0;">Predicted Risk Probability: {prob_percent:.1f}%</p>
+                <h2 style="margin:0; font-size:36px;">📝 Prediction Result: {severity_status}</h2>
+                <p style="font-size:26px; margin:5px 0 0 0;">Predicted Risk Probability: {prob_percent:.1f}%</p>
             </div>
         """, unsafe_allow_html=True)
             
@@ -340,7 +367,7 @@ elif st.session_state.current_nav == "REPORT":
 # --- MODULE 5: SYSTEM HELP ---
 elif st.session_state.current_nav == "ABOUT":
     st.markdown("<h2 style='color: #1a3a4b;'>System Help & User Guide</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 22px; color: #555; margin-bottom: 25px;'>This guide outlines the application layout and workflow pipelines mapping system operational modules to their target descriptions.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 22px; color: #555; margin-bottom: 25px;'>This guide explains the workflow and functional modules of the Heart Failure Prediction System.</p>", unsafe_allow_html=True)
     
     presentation_help_data = {
         "System Module": [
